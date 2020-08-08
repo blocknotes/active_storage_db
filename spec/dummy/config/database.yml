@@ -1,0 +1,19 @@
+<% case ENV['DB']
+when 'mysql' %>
+test:
+  adapter: mysql2
+  database: active_storage_db_dummy_test
+  username: root
+  password:
+  encoding: utf8
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+<% when 'postgres', 'postgresql' %>
+test:
+  adapter: postgresql
+  database: active_storage_db_dummy_test
+  encoding: utf8
+  min_messages: warning
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+<% else %>
+  <% raise "Invalid or empty env DB #{ENV['DB']}" %>
+<% end %>

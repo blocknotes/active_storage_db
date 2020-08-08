@@ -1,0 +1,17 @@
+inherit_from:
+  - https://relaxed.ruby.style/rubocop.yml
+
+AllCops:
+  TargetRubyVersion: 2.6
+  Exclude:
+    - bin/*
+    - db/schema.rb
+    - spec/dummy/**/*
+    - vendor/**/*
+
+Gemspec/RequiredRubyVersion:
+  Enabled: false
+
+Layout/LineLength:
+  Enabled: true
+  Max: 120

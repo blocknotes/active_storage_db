@@ -1,4 +1,5 @@
-# desc "Explaining what the task does"
+# frozen_string_literal: true
+
+# desc 'ActiveStorageDB sync'
 # task :active_storage_db do
-#   # Task goes here
 # end
