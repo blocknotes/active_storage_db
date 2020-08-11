@@ -9,8 +9,9 @@ RSpec.describe 'File controller', type: :request do
     ActiveStorage::Blob.create_before_direct_upload! filename: filename, byte_size: byte_size, checksum: checksum, content_type: content_type # rubocop:disable Layout/LineLength
   end
 
-  let(:blob) { create_blob(filename: 'hello.jpg', content_type: 'image/jpg') }
+  let(:blob) { create_blob(filename: 'img.jpg', content_type: 'image/jpg') }
   let(:host) { 'http://test.example.com:3001' }
+  let(:engine_url_helpers) { ::ActiveStorageDB::Engine.routes.url_helpers }
 
   before { allow(ActiveStorage::Current).to receive(:host).and_return(host) }
 
@@ -20,9 +21,8 @@ RSpec.describe 'File controller', type: :request do
 
       expect(response).to have_http_status(:ok)
       expect(response.content_type).to eq('image/jpg')
-      expect(response.headers['Content-Disposition']).to eq(
-        "inline; filename=\"hello.jpg\"; filename*=UTF-8''hello.jpg"
-      )
+      content_disposition = response.headers['Content-Disposition']
+      expect(content_disposition).to eq("inline; filename=\"img.jpg\"; filename*=UTF-8''img.jpg")
       expect(response.body).to eq 'Hello world!'
     end
 
@@ -31,9 +31,8 @@ RSpec.describe 'File controller', type: :request do
 
       expect(response).to have_http_status(:ok)
       expect(response.content_type).to eq('image/jpg')
-      expect(response.headers['Content-Disposition']).to eq(
-        "attachment; filename=\"hello.jpg\"; filename*=UTF-8''hello.jpg"
-      )
+      content_disposition = response.headers['Content-Disposition']
+      expect(content_disposition).to eq("attachment; filename=\"img.jpg\"; filename*=UTF-8''img.jpg")
       expect(response.body).to eq 'Hello world!'
     end
 
@@ -50,10 +49,9 @@ RSpec.describe 'File controller', type: :request do
     end
 
     context 'with an invalid key' do
-      let(:engine_url_helpers) { ::ActiveStorageDB::Engine.routes.url_helpers }
-
       it 'returns not found' do
         get engine_url_helpers.service_path(encoded_key: 'Invalid key', filename: 'hello.txt')
+
         expect(response).to have_http_status(:not_found)
       end
     end
@@ -74,7 +72,7 @@ RSpec.describe 'File controller', type: :request do
       put blob.service_url_for_direct_upload, params: data, headers: { 'Content-Type' => 'application/octet-stream' }
 
       expect(response).to have_http_status(:unprocessable_entity)
-      expect(blob.service.exist?(blob.key)).to be_falsey
+      expect(blob.service).not_to exist(blob.key)
     end
 
     context 'with an invalid checksum' do
@@ -86,7 +84,7 @@ RSpec.describe 'File controller', type: :request do
         put blob.service_url_for_direct_upload, params: data
 
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(blob.service.exist?(blob.key)).to be_falsey
+        expect(blob.service).not_to exist(blob.key)
       end
     end
 
@@ -97,15 +95,14 @@ RSpec.describe 'File controller', type: :request do
         put blob.service_url_for_direct_upload, params: data, headers: { 'Content-Type' => 'text/plain' }
 
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(blob.service.exist?(blob.key)).to be_falsey
+        expect(blob.service).not_to exist(blob.key)
       end
     end
 
     context 'with an invalid token' do
-      let(:engine_url_helpers) { ::ActiveStorageDB::Engine.routes.url_helpers }
-
       it 'returns not found' do
         put engine_url_helpers.update_service_path(encoded_token: 'Invalid token')
+
         expect(response).to have_http_status(:not_found)
       end
     end
