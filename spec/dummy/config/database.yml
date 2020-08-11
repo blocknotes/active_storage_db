@@ -2,18 +2,19 @@
 when 'mysql' %>
 test:
   adapter: mysql2
-  database: active_storage_db_dummy_test
-  username: root
-  password:
+  host: <%= ENV.fetch('DB_HOST') { '127.0.0.1' } %>
+  database: <%= ENV.fetch('DB_NAME') { 'active_storage_db_dummy_test' } %>
+  username: <%= ENV.fetch('DB_USERNAME') { 'root' } %>
+  password: <%= ENV.fetch('DB_PASSWORD') { '' } %>
   encoding: utf8
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  pool: <%= ENV.fetch('RAILS_MAX_THREADS') { 5 } %>
 <% when 'postgres', 'postgresql' %>
 test:
   adapter: postgresql
   database: active_storage_db_dummy_test
   encoding: utf8
   min_messages: warning
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  pool: <%= ENV.fetch('RAILS_MAX_THREADS') { 5 } %>
 <% else %>
   <% raise "Invalid or empty env DB #{ENV['DB']}" %>
 <% end %>
