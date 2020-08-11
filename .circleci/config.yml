@@ -5,11 +5,49 @@ orbs:
 jobs:
   build:
     docker:
-      - image: circleci/ruby:2.6.3-stretch-node
+      - image: circleci/ruby:2.6.6-node
+        environment:
+          RAILS_ENV: test
+          PGHOST: 127.0.0.1
+          PGUSER: root
+      - image: circleci/postgres:9.6.15-alpine
+        environment:
+          POSTGRES_USER: root
+          POSTGRES_DB: circle-test_test
     executor: ruby/default
     steps:
       - checkout
+      - restore_cache:
+          key: gem-cache-{{ checksum "active_storage_db.gemspec" }}
       - run:
-          name: Which bundler?
-          command: bundle -v
-      - ruby/bundle-install
+          name: Setup Bundler
+          command: gem install bundler
+      - run:
+          name: Bundle Install
+          command: bundle install --path vendor/bundle
+      - save_cache:
+          key: gem-cache-{{ checksum "active_storage_db.gemspec" }}
+          paths: vendor/bundle
+      - run:
+          name: PostgreSQL DB Setup
+          command: |
+            DB=postgresql bin/rails db:reset
+      - run:
+          name: Run PostgreSQL Specs
+          command: |
+            DB=postgresql bin/rspec \
+              --profile 10 \
+              --format RspecJunitFormatter \
+              --out test_results/rspec.xml \
+              --format progress \
+              $(circleci tests glob "spec/**/*_spec.rb")
+      - store_test_results:
+          path: test_results
+
+triggers:
+  - schedule:
+      cron: "0 8 * * 0"
+      filters:
+        branches:
+          only:
+            - master
