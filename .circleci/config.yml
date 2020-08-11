@@ -7,23 +7,14 @@ jobs:
     docker:
       - image: circleci/ruby:2.6.6-node
         environment:
-          DB_HOST: 127.0.0.1
-          PGHOST: 127.0.0.1
-          PGUSER: root
           RAILS_ENV: test
       - image: circleci/mysql:8.0.20
         command: [--default-authentication-plugin=mysql_native_password]
         environment:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_ROOT_HOST: '%'
-          MYSQL_ROOT_PASSWORD: ''
-          MYSQL_DATABASE: circle-test_test
-          MYSQL_USER: user
-          MYSQL_PASSWORD: ''
       - image: circleci/postgres:9.6.15-alpine
         environment:
           POSTGRES_USER: root
-          POSTGRES_DB: circle-test_test
     executor: ruby/default
     steps:
       - checkout
@@ -38,16 +29,16 @@ jobs:
       - save_cache:
           key: gem-cache-{{ checksum "active_storage_db.gemspec" }}
           paths: vendor/bundle
-      # - run:
-      #     name: Run PostgreSQL Specs
-      #     command: |
-      #       DB=postgresql bin/rails db:reset
-      #       DB=postgresql bin/rspec \
-      #         --profile 10 \
-      #         --format RspecJunitFormatter \
-      #         --out test_results/rspec.xml \
-      #         --format progress \
-      #         $(circleci tests glob "spec/**/*_spec.rb")
+      - run:
+          name: Run PostgreSQL Specs
+          command: |
+            DB=postgresql bin/rails db:reset
+            DB=postgresql bin/rspec \
+              --profile 10 \
+              --format RspecJunitFormatter \
+              --out test_results/rspec_postgresql.xml \
+              --format progress \
+              $(circleci tests glob "spec/**/*_spec.rb")
       - run:
           name: Run MySQL Specs
           command: |
@@ -55,7 +46,7 @@ jobs:
             DB=mysql bin/rspec \
               --profile 10 \
               --format RspecJunitFormatter \
-              --out test_results/rspec.xml \
+              --out test_results/rspec_mysql.xml \
               --format progress \
               $(circleci tests glob "spec/**/*_spec.rb")
       - store_test_results:
