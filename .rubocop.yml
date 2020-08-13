@@ -1,6 +1,8 @@
 inherit_from:
   - https://relaxed.ruby.style/rubocop.yml
 
+require: rubocop-rspec
+
 AllCops:
   TargetRubyVersion: 2.6
   Exclude:
@@ -12,6 +14,17 @@ AllCops:
 Gemspec/RequiredRubyVersion:
   Enabled: false
 
-Layout/LineLength:
+Metrics/LineLength:
   Enabled: true
   Max: 120
+
+RSpec/MultipleExpectations:
+  # Default is 1
+  Max: 5
+
+RSpec/NestedGroups:
+  # Default is 3
+  Max: 5
+
+RSpec/ExampleLength:
+  Max: 6

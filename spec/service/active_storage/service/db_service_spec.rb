@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
 RSpec.describe ActiveStorage::Service::DBService do
-  let(:fixture_data) {
-    (+"\211PNG\r\n\032\n\000\000\000\rIHDR\000\000\000\020\000\000\000\020\001\003\000\000\000%=m\"\000\000\000\006PLTE\000\000\000\377\377\377\245\331\237\335\000\000\0003IDATx\234c\370\377\237\341\377_\206\377\237\031\016\2603\334?\314p\1772\303\315\315\f7\215\031\356\024\203\320\275\317\f\367\201R\314\f\017\300\350\377\177\000Q\206\027(\316]\233P\000\000\000\000IEND\256B`\202").force_encoding(Encoding::BINARY) # rubocop:disable Layout/LineLength
-  }
+  let(:fixture_data) { build(:active_storage_db_file).data }
   let(:content_type) { 'image/png' }
+  let(:host) { 'http://test.example.com:3001' }
   let(:checksum) { Digest::MD5.base64digest(fixture_data) }
   let(:key) { SecureRandom.base58(24) }
-  let(:tmp_config) { { tmp: { service: 'DB' } } }
-  let(:service) { described_class.configure(:tmp, tmp_config) }
+  let(:service) { described_class.configure(:tmp, tmp: { service: 'DB' }) }
   let(:upload_options) { {} }
   let(:upload) { service.upload(key, StringIO.new(fixture_data), upload_options) }
 
@@ -18,20 +16,22 @@ RSpec.describe ActiveStorage::Service::DBService do
   end
 
   describe '.delete' do
+    subject(:delete) { service.delete(key) }
+
     before { upload }
 
     it 'deletes the file' do
-      expect(service.delete(key)).to be_kind_of ActiveStorageDB::File
-      expect(service.delete(key)).to be_nil
+      expect { delete }.to change { ActiveStorageDB::File.count }.from(1).to(0)
     end
   end
 
   describe '.delete_prefixed' do
+    subject(:delete_prefixed) { service.delete_prefixed(key[0..10]) }
+
+    before { upload }
+
     it 'deletes the files' do
-      file = upload
-      prefix = key[0..10]
-      expect(service.delete_prefixed(prefix)).to eq [file]
-      expect(service.delete_prefixed(prefix)).to be_empty
+      expect { delete_prefixed }.to change { ActiveStorageDB::File.count }.from(1).to(0)
     end
   end
 
@@ -48,11 +48,11 @@ RSpec.describe ActiveStorage::Service::DBService do
       after { service.delete(key) }
 
       it 'downloads the data' do
-        is_expected.to eq fixture_data
+        expect(download).to eq fixture_data
       end
 
-      context 'with a block' do
-        it 'sends the data to the block' do
+      context 'with download a block' do
+        let(:download_block) do
           result = nil
           service.download(key) do |data|
             if result
@@ -61,31 +61,34 @@ RSpec.describe ActiveStorage::Service::DBService do
               result = data
             end
           end
-          expect(result).to eq fixture_data
+          result
+        end
+
+        it 'sends the data to the block' do
+          expect(download_block).to eq fixture_data
         end
       end
     end
   end
 
   describe '.download_chunk' do
-    let(:subject) { service.download_chunk(key, range) }
-    let(:range) { (10..25) }
+    subject { service.download_chunk(key, range) }
+
+    let(:range) { (10..15) }
 
     before { upload }
 
     after { service.delete(key) }
 
-    it 'download a specific chunk of data' do
-      is_expected.to eq fixture_data[range]
-    end
+    it { is_expected.to eq fixture_data[range] }
   end
 
   describe '.exist?' do
-    subject(:exist) { service.exist?(key) }
+    subject { service.exist?(key) }
 
     it { is_expected.to be_falsey }
 
-    context 'after an upload' do
+    context 'when a file is uploaded' do
       before { upload }
 
       after { service.delete(key) }
@@ -95,11 +98,9 @@ RSpec.describe ActiveStorage::Service::DBService do
   end
 
   describe '.headers_for_direct_upload' do
-    subject(:headers) { service.headers_for_direct_upload(key, content_type: content_type) }
+    subject { service.headers_for_direct_upload(key, content_type: content_type) }
 
-    it 'returns the headers' do
-      is_expected.to eq({ 'Content-Type' => content_type })
-    end
+    it { is_expected.to eq('Content-Type' => content_type) }
   end
 
   describe '.upload' do
@@ -129,11 +130,11 @@ RSpec.describe ActiveStorage::Service::DBService do
   end
 
   describe '.url' do
-    let(:subject) do
-      filename = ActiveStorage::Filename.new('avatar.png')
+    subject do
       service.url(key, expires_in: 5.minutes, disposition: :inline, filename: filename, content_type: content_type)
     end
-    let(:host) { 'http://test.example.com:3001' }
+
+    let(:filename) { ActiveStorage::Filename.new('avatar.png') }
 
     before do
       upload
@@ -142,17 +143,15 @@ RSpec.describe ActiveStorage::Service::DBService do
 
     after { service.delete(key) }
 
-    it 'generates the file URL' do
-      is_expected.to start_with host
-    end
+    it { is_expected.to start_with host }
   end
 
   describe '.url_for_direct_upload' do
+    subject { service.url_for_direct_upload(key, url_options) }
+
     let(:url_options) do
       { expires_in: 5.minutes, content_type: content_type, content_length: fixture_data.size, checksum: checksum }
     end
-    let(:subject) { service.url_for_direct_upload(key, url_options) }
-    let(:host) { 'http://test.example.com:3001' }
 
     before do
       upload
@@ -161,8 +160,6 @@ RSpec.describe ActiveStorage::Service::DBService do
 
     after { service.delete(key) }
 
-    it 'generates the file URL' do
-      is_expected.to start_with host
-    end
+    it { is_expected.to start_with host }
   end
 end
