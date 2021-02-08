@@ -27,8 +27,8 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir["{app,config,db,lib}/**/*", 'MIT-LICENSE', 'Rakefile', 'README.md']
 
-  spec.add_dependency 'activestorage', '~> 6.0.0'
-  spec.add_dependency 'rails', '~> 6.0.0'
+  spec.add_dependency 'activestorage', '~> 5.2.0'
+  spec.add_dependency 'rails', '~> 5.2.0'
 
   spec.add_development_dependency 'capybara', '~> 3.33.0'
   spec.add_development_dependency 'database_cleaner-active_record', '~> 1.8.0'
