@@ -1,0 +1,15 @@
+fail_on_violations: true
+
+eslint:
+  config_file: .eslintrc.json
+  enabled: true
+
+jshint:
+  enabled: false
+
+rubocop:
+  config_file: .rubocop.yml
+  version: 0.91.0
+
+scss:
+  enabled: false
