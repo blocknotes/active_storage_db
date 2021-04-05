@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
   spec.name        = 'active_storage_db'
   spec.version     = ActiveStorageDB::VERSION
   spec.authors     = ['Mattia Roccoberton']
-  spec.email       = ['mattiaroccoberton@nebulab.it']
-  spec.homepage    = 'https://blocknot.es'
+  spec.email       = ['mat@blocknot.es']
+  spec.homepage    = 'https://github.com/blocknotes/active_storage_db'
   spec.summary     = 'ActiveStorage DB Service'
   spec.description = 'An ActiveStorage service plugin to store files in database.'
   spec.license     = 'MIT'
