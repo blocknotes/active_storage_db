@@ -23,6 +23,8 @@ db:
 ## Do you like it? Star it!
 If you use this component just star it. A developer is more motivated to improve a project when there is some interest.
 
+Or consider offering me a coffee, it's a small thing but it is greatly appreciated: [about me](https://www.blocknot.es/about-me).
+
 ## Contributors
 - [Mattia Roccoberton](https://blocknot.es/): author
 - Inspired by [activestorage-database-service](https://github.com/TitovDigital/activestorage-database-service) project
