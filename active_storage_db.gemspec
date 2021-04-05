@@ -16,6 +16,8 @@ Gem::Specification.new do |spec|
   spec.description = 'An ActiveStorage service plugin to store files in database.'
   spec.license     = 'MIT'
 
+  spec.required_ruby_version = '>= 2.5.0'
+
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
   if spec.respond_to?(:metadata)
@@ -38,7 +40,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'pry', '~> 0.13'
   spec.add_development_dependency 'rspec_junit_formatter', '~> 0.4'
   spec.add_development_dependency 'rspec-rails', '~> 4.0'
-  spec.add_development_dependency 'rubocop', '~> 0.89'
+  spec.add_development_dependency 'rubocop', '~> 0.91'
   spec.add_development_dependency 'rubocop-rspec', '~> 1.42'
   spec.add_development_dependency 'selenium-webdriver', '~> 3.142'
   spec.add_development_dependency 'simplecov', '~> 0.18'
