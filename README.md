@@ -6,6 +6,8 @@ Main features:
 - data is saved using a binary field (or blob);
 - RSpec tests.
 
+Useful also with platforms like Heroku (due to their ephemeral file system).
+
 ## Installation
 - Setup Active Storage in your Rails application
 - Add this line to your Gemfile: `gem 'active_storage_db'`
