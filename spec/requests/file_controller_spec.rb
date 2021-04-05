@@ -15,6 +15,10 @@ RSpec.describe 'File controller', type: :request do
 
   before { allow(ActiveStorage::Current).to receive(:host).and_return(host) }
 
+  it 'creates a new File entity in the DB' do
+    expect { create_blob }.to change(ActiveStorageDB::File, :count).from(0).to(1)
+  end
+
   describe '.show' do
     it 'returns the blob as inline' do
       get blob.service_url
