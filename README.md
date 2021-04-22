@@ -10,10 +10,8 @@ Useful also with platforms like Heroku (due to their ephemeral file system).
 
 ## Installation
 - Setup Active Storage in your Rails application
-- Add this line to your Gemfile: `gem 'active_storage_db'`
-- And execute: `bundle`
-- Install gem migrations: `bin/rails active_storage_db:install:migrations`
-- And execute: `bin/rails db:migrate`
+- Add to your Gemfile `gem 'active_storage_db'` (and execute: `bundle`)
+- Install the gem migrations: `bin/rails active_storage_db:install:migrations` (and execute: `bin/rails db:migrate`)
 - Add to your `config/routes.rb`: `mount ActiveStorageDB::Engine => '/active_storage_db'`
 - Change Active Storage service in *config/environments/development.rb* to: `config.active_storage.service = :db`
 - Add to *config/storage.yml*:
