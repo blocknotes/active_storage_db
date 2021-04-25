@@ -13,7 +13,7 @@ test:
   adapter: postgresql
   host: <%= ENV.fetch('PG_DB_HOST') { '127.0.0.1' } %>
   database: <%= ENV.fetch('PG_DB_NAME') { 'active_storage_db_dummy_test' } %>
-  username: <%= ENV.fetch('PG_DB_USERNAME') { 'root' } %>
+  username: <%= ENV.fetch('PG_DB_USERNAME') { '' } %>
   password: <%= ENV.fetch('PG_DB_PASSWORD') { '' } %>
   encoding: utf8
   min_messages: warning
