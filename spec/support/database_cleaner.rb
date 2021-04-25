@@ -19,7 +19,7 @@ RSpec.configure do |config|
       MSG
     end
 
-    DatabaseCleaner.clean_with(:truncation, except: %w[spree_preferences])
+    DatabaseCleaner.clean_with(:truncation)
   end
 
   config.before do
@@ -27,7 +27,7 @@ RSpec.configure do |config|
   end
 
   config.before(:example, type: :with_truncation_strategy) do
-    DatabaseCleaner.strategy = :truncation, { except: %w[spree_preferences] }
+    DatabaseCleaner.strategy = :truncation
   end
 
   config.before(:each, type: :feature) do
@@ -39,7 +39,7 @@ RSpec.configure do |config|
       # Driver is probably for an external browser with an app
       # under test that does *not* share a database connection with the
       # specs, so use truncation strategy.
-      DatabaseCleaner.strategy = :truncation, { except: %w[spree_preferences] }
+      DatabaseCleaner.strategy = :truncation
     end
   end
 
@@ -52,6 +52,6 @@ RSpec.configure do |config|
   end
 
   config.append_after(:suite) do
-    DatabaseCleaner.clean_with(:truncation, only: %w[spree_preferences])
+    DatabaseCleaner.clean_with(:truncation)
   end
 end

@@ -1,4 +1,4 @@
-# Active Storage DB [![Gem Version](https://badge.fury.io/rb/active_storage_db.svg)](https://badge.fury.io/rb/active_storage_db) [![CircleCI](https://circleci.com/gh/blocknotes/active_storage_db.svg?style=svg)](https://circleci.com/gh/blocknotes/active_storage_db)
+# Active Storage DB [![Gem Version](https://badge.fury.io/rb/active_storage_db.svg)](https://badge.fury.io/rb/active_storage_db) [![Specs - Postgres](https://github.com/blocknotes/active_storage_db/actions/workflows/postgres.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/postgres.yml) [![Specs - MySQL](https://github.com/blocknotes/active_storage_db/actions/workflows/mysql.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/mysql.yml)
 An Active Storage service upload/download plugin that stores files in a PostgreSQL or MySQL database.
 
 Main features:

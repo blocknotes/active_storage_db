@@ -2,7 +2,7 @@
 # This command will automatically be run when you run "rails" with Rails gems
 # installed from the root of your application.
 
-ENV['DB'] ||= 'postgres'
+ENV['DB_TEST'] ||= 'postgres'
 ENV['RAILS_ENV'] ||= 'test'
 
 ENGINE_ROOT = File.expand_path('..', __dir__)

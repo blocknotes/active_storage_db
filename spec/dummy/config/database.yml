@@ -1,9 +1,10 @@
-<% case ENV['DB']
+<% case ENV['DB_TEST']
 when 'mysql' %>
 test:
   adapter: mysql2
   host: <%= ENV.fetch('MYSQL_DB_HOST') { '127.0.0.1' } %>
-  database: <%= ENV.fetch('MYSQL_DB_NAME') { 'active_storage_db_dummy_test' } %>
+  port: <%= ENV.fetch('MYSQL_DB_PORT') { 3306 } %>
+  database: <%= ENV.fetch('MYSQL_DB_NAME') { 'active_storage_db-test' } %>
   username: <%= ENV.fetch('MYSQL_DB_USERNAME') { 'root' } %>
   password: <%= ENV.fetch('MYSQL_DB_PASSWORD') { '' } %>
   encoding: utf8
@@ -12,12 +13,12 @@ test:
 test:
   adapter: postgresql
   host: <%= ENV.fetch('PG_DB_HOST') { '127.0.0.1' } %>
-  database: <%= ENV.fetch('PG_DB_NAME') { 'active_storage_db_dummy_test' } %>
+  database: <%= ENV.fetch('PG_DB_NAME') { 'active_storage_db-test' } %>
   username: <%= ENV.fetch('PG_DB_USERNAME') { '' } %>
   password: <%= ENV.fetch('PG_DB_PASSWORD') { '' } %>
   encoding: utf8
   min_messages: warning
   pool: <%= ENV.fetch('RAILS_MAX_THREADS') { 5 } %>
 <% else %>
-  <% raise "Invalid or empty env DB #{ENV['DB']}" %>
+  <% raise "Invalid or empty env DB_TEST #{ENV['DB_TEST']}" %>
 <% end %>
