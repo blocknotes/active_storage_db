@@ -23,12 +23,15 @@ load 'rails/tasks/statistics.rake'
 
 require 'bundler/gem_tasks'
 
-require 'rake/testtask'
+begin
+  require 'rspec/core/rake_task'
 
-Rake::TestTask.new(:test) do |t|
-  t.libs << 'spec'
-  t.pattern = 'spec/**/*_spec.rb'
-  t.verbose = false
+  RSpec::Core::RakeTask.new(:spec) do |t|
+    # t.ruby_opts = %w[-w]
+    t.rspec_opts = ['--color', '--format documentation']
+  end
+
+  task default: :spec
+rescue LoadError
+  puts '! LoadError: no RSpec available'
 end
-
-task default: :test

@@ -32,16 +32,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'activestorage', '~> 6.0'
   spec.add_dependency 'rails', '~> 6.0'
 
-  spec.add_development_dependency 'capybara', '~> 3.33'
-  spec.add_development_dependency 'database_cleaner-active_record', '~> 1.8'
   spec.add_development_dependency 'factory_bot_rails', '~> 6.1'
-  spec.add_development_dependency 'mysql2', '~> 0.5'
-  spec.add_development_dependency 'pg', '~> 1.2'
-  spec.add_development_dependency 'pry', '~> 0.13'
-  spec.add_development_dependency 'rspec_junit_formatter', '~> 0.4'
-  spec.add_development_dependency 'rspec-rails', '~> 4.0'
-  spec.add_development_dependency 'rubocop', '~> 0.91'
-  spec.add_development_dependency 'rubocop-rspec', '~> 1.42'
-  spec.add_development_dependency 'selenium-webdriver', '~> 3.142'
-  spec.add_development_dependency 'simplecov', '~> 0.18'
 end
