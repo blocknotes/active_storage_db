@@ -9,4 +9,22 @@ namespace :asdb do
       puts "#{size_k}K  #{date}  #{filename}"
     end
   end
+
+  desc 'ActiveStorageDB: download attachment'
+  task :cp, [:src, :dst] => [:environment] do |_t, args|
+    src = args[:src]&.strip
+    dst = args[:dst]&.strip
+    abort('Required arguments: source file, destination file') if src.blank? || dst.blank?
+
+    dst = "#{dst}/#{src}" if Dir.exist?(dst)
+    abort("Can't write on: #{dst}") unless File.writable?(dst)
+
+    blob = ::ActiveStorage::Blob.order(created_at: :desc).find_by(filename: src)
+    abort('Source file not found') unless blob
+
+    ret = File.binwrite(dst, blob.download)
+    puts "#{ret} bytes written"
+  rescue StandardError => e
+    puts e
+  end
 end

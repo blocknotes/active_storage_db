@@ -20,4 +20,71 @@ RSpec.describe 'active_storage_db_tasks' do
       expect(task.split("\n").size).to be 3
     end
   end
+
+  describe 'asdb:cp' do
+    subject(:task) { execute_task('asdb:cp', options) }
+
+    let(:options) {}
+
+    it 'exits showing the required arguments' do
+      with_captured_stderr do
+        expect { task }.to raise_exception(SystemExit, /Required arguments/)
+      end
+    end
+
+    context 'with only the source specified' do
+      let(:options) { { src: 'some_file' } }
+
+      it 'exits showing the required arguments' do
+        with_captured_stderr do
+          expect { task }.to raise_exception(SystemExit, /Required arguments/)
+        end
+      end
+    end
+
+    context 'with an invalid destination' do
+      let(:options) { { src: 'some_file', dst: 'some_path' } }
+
+      before do
+        allow(File).to receive(:writable?).and_return(false)
+      end
+
+      it 'exits showing a write error' do
+        with_captured_stderr do
+          expect { task }.to raise_exception(SystemExit, /Can't write on/)
+        end
+      end
+    end
+
+    context 'with a missing source' do
+      let(:options) { { src: 'some_file', dst: 'some_path' } }
+
+      before do
+        allow(File).to receive(:writable?).and_return(true)
+      end
+
+      it 'exits showing a not found error' do
+        with_captured_stderr do
+          expect { task }.to raise_exception(SystemExit, /Source file not found/)
+        end
+      end
+    end
+
+    context 'with valid arguments' do
+      let(:blob) { build_stubbed(:active_storage_blob) }
+      let(:blobs) { instance_double(ActiveRecord::Relation) }
+      let(:options) { { src: blob.filename.to_s, dst: 'some_path' } }
+
+      before do
+        allow(File).to receive_messages(binwrite: 1000, writable?: true)
+        allow(ActiveStorage::Blob).to receive(:order).and_return(blobs)
+        allow(blobs).to receive(:find_by).and_return(blob)
+        allow(blob).to receive(:download).and_return('some data')
+      end
+
+      it 'prints the number of bytes written' do
+        expect(task).to eq "1000 bytes written\n"
+      end
+    end
+  end
 end
