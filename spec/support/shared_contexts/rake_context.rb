@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-shared_context 'rake context' do
+shared_context 'with rake tasks' do
   Rails.application.load_tasks
 
   def execute_task(task, args = nil)

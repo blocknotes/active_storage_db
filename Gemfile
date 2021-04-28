@@ -13,8 +13,8 @@ group :development, :test do
   gem 'pg', '~> 1.2'
   gem 'rspec_junit_formatter', '~> 0.4'
   gem 'rspec-rails', '~> 4.0'
-  gem 'rubocop', '~> 0.91'
-  gem 'rubocop-rspec', '~> 1.42'
+  gem 'rubocop', '1.13'
+  gem 'rubocop-rspec', '2.2.0'
   gem 'selenium-webdriver', '~> 3.142'
   gem 'simplecov', '~> 0.18'
 

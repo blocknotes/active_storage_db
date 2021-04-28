@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe 'active_storage_db_tasks' do
-  include_context 'rake context'
+RSpec.describe 'ActiveStorageDB tasks' do # rubocop:disable RSpec/DescribeClass
+  include_context 'with rake tasks'
 
   describe 'asdb:ls' do
     subject(:task) { execute_task('asdb:ls') }

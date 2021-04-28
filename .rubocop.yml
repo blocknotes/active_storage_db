@@ -1,20 +1,24 @@
 inherit_from:
+  - .rubocop_todo.yml
   - https://relaxed.ruby.style/rubocop.yml
+
+
 
 require: rubocop-rspec
 
 AllCops:
-  TargetRubyVersion: 2.5
+  NewCops: enable
   Exclude:
     - bin/*
     - db/schema.rb
     - spec/dummy/**/*
     - vendor/**/*
+  TargetRubyVersion: 2.7
 
 Gemspec/RequiredRubyVersion:
   Enabled: false
 
-Metrics/LineLength:
+Layout/LineLength:
   Enabled: true
   Max: 120
 
