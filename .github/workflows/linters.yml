@@ -18,7 +18,18 @@ jobs:
         with:
           ruby-version: '2.7'
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-      - name: Install Rubocop
+      - name: Install RuboCop
         run: gem install rubocop rubocop-rspec
-      - name: Check code
+      - name: Run RuboCop
         run: rubocop
+        # id: rubocop-check
+        # run: echo "::set-output name=results::$(rubocop)"
+
+#      - name: View context attributes
+#        uses: actions/github-script@v4
+#        with:
+#          script: console.log("${{steps.rubocop-check.outputs.results}}")
+#      - name: View context attributes 2
+#        uses: actions/github-script@v4
+#        with:
+#          script: console.log(JSON.stringify(${{steps}}))

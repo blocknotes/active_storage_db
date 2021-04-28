@@ -3,8 +3,9 @@
 require 'simplecov'
 SimpleCov.start :rails do
   filters.clear
-  add_filter %r{^/spec/}
   add_filter %r{^/lib/active_storage_db/version.rb}
+  add_filter %r{^/spec/}
+  add_filter %r{^/vendor/}
 end
 
 require 'spec_helper'
