@@ -20,6 +20,11 @@ db:
   service: DB
 ```
 
+## Misc
+Some rake tasks are available:
+- `asdb:list`: list the stored attachments
+- `asdb:get`: download an attachment (ex. `bin/rails "asdb:get[ruby-logo.png,/tmp]"`)
+
 ## Do you like it? Star it!
 If you use this component just star it. A developer is more motivated to improve a project when there is some interest.
 

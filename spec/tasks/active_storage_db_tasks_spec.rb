@@ -3,8 +3,8 @@
 RSpec.describe 'ActiveStorageDB tasks' do # rubocop:disable RSpec/DescribeClass
   include_context 'with rake tasks'
 
-  describe 'asdb:ls' do
-    subject(:task) { execute_task('asdb:ls') }
+  describe 'asdb:list' do
+    subject(:task) { execute_task('asdb:list') }
 
     let(:file1) { create(:active_storage_blob, filename: 'file1', created_at: Time.now - 1.hour) }
     let(:file2) { create(:active_storage_blob, filename: 'file2', created_at: Time.now - 5.hour) }
@@ -21,8 +21,8 @@ RSpec.describe 'ActiveStorageDB tasks' do # rubocop:disable RSpec/DescribeClass
     end
   end
 
-  describe 'asdb:cp' do
-    subject(:task) { execute_task('asdb:cp', options) }
+  describe 'asdb:get' do
+    subject(:task) { execute_task('asdb:get', options) }
 
     let(:options) {}
 
