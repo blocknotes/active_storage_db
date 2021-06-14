@@ -1,35 +1,35 @@
+---
 name: Linters
 
 on:
   push:
-    branches: [master]
+    branches:
+      - master
   pull_request:
-    branches: [master]
 
 jobs:
-  linters:
+  reviewdog:
+    name: Reviewdog
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Check out code
         uses: actions/checkout@v2
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.7'
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-      - name: Install RuboCop
-        run: gem install rubocop rubocop-rspec
-      - name: Run RuboCop
-        run: rubocop
-        # id: rubocop-check
-        # run: echo "::set-output name=results::$(rubocop)"
 
-#      - name: View context attributes
-#        uses: actions/github-script@v4
-#        with:
-#          script: console.log("${{steps.rubocop-check.outputs.results}}")
-#      - name: View context attributes 2
-#        uses: actions/github-script@v4
-#        with:
-#          script: console.log(JSON.stringify(${{steps}}))
+      - uses: reviewdog/action-setup@v1
+        with:
+          reviewdog_version: latest
+
+      - name: Run reviewdog
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          reviewdog -fail-on-error -reporter=github-pr-review -runners=brakeman,fasterer,reek,rubocop
+
+        # NOTE: check with: reviewdog -fail-on-error -reporter=github-pr-review -runners=fasterer -diff="git diff" -tee

@@ -8,15 +8,23 @@ gemspec
 group :development, :test do
   gem 'capybara', '~> 3.33'
   gem 'database_cleaner-active_record', '~> 1.8'
-  # gem 'factory_bot_rails', '~> 6.1'
   gem 'mysql2', '~> 0.5'
   gem 'pg', '~> 1.2'
   gem 'rspec_junit_formatter', '~> 0.4'
   gem 'rspec-rails', '~> 4.0'
-  gem 'rubocop', '1.13'
-  gem 'rubocop-rspec', '2.2.0'
   gem 'selenium-webdriver', '~> 3.142'
   gem 'simplecov', '~> 0.18'
 
+  # Linters
+  gem 'brakeman'
+  gem 'fasterer'
+  gem 'reek'
+  gem 'rubocop'
+  gem 'rubocop-packaging'
+  gem 'rubocop-performance'
+  gem 'rubocop-rails'
+  gem 'rubocop-rspec'
+
+  # Tools
   gem 'pry-rails'
 end
