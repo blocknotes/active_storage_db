@@ -112,7 +112,12 @@ module ActiveStorage
     private
 
     def current_host
-      ActiveStorage::Current.host
+      host = ActiveStorage::Current.url_options[:host]
+      port = ActiveStorage::Current.url_options[:port]
+      protocol = ActiveStorage::Current.url_options[:protocol]
+
+      url = URI.parse("#{protocol}://#{host}:#{port}").to_s
+      return URI.encode(url)
     end
 
     def ensure_integrity_of(key, checksum)
