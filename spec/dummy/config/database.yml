@@ -1,16 +1,16 @@
 <% case ENV['DB_TEST']
 when 'mysql' %>
-test:
+test: &test
   adapter: mysql2
   host: <%= ENV.fetch('MYSQL_DB_HOST') { '127.0.0.1' } %>
-  port: <%= ENV.fetch('MYSQL_DB_PORT') { 3306 } %>
+  # port: <%= ENV.fetch('MYSQL_DB_PORT') { 3306 } %>
   database: <%= ENV.fetch('MYSQL_DB_NAME') { 'active_storage_db-test' } %>
-  username: <%= ENV.fetch('MYSQL_DB_USERNAME') { 'root' } %>
+  username: <%= ENV.fetch('MYSQL_DB_USERNAME') { '' } %>
   password: <%= ENV.fetch('MYSQL_DB_PASSWORD') { '' } %>
   encoding: utf8
   pool: <%= ENV.fetch('RAILS_MAX_THREADS') { 5 } %>
 <% when 'postgres', 'postgresql' %>
-test:
+test: &test
   adapter: postgresql
   host: <%= ENV.fetch('PG_DB_HOST') { '127.0.0.1' } %>
   database: <%= ENV.fetch('PG_DB_NAME') { 'active_storage_db-test' } %>
@@ -22,3 +22,7 @@ test:
 <% else %>
   <% raise "Invalid or empty env DB_TEST #{ENV['DB_TEST']}" %>
 <% end %>
+
+development:
+  <<: *test
+  database: active_storage_db-dev
