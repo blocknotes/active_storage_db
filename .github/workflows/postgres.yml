@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         ruby: ['2.6', '2.7']
-        gemfile: ['rails_6_1_postgres']
+        gemfile: ['rails_6_1_postgres', 'rails_6_0_postgres']
         # gemfile: ['rails_7_0_postgres', 'rails_6_1_postgres', 'rails_6_0_postgres']
 
     env:

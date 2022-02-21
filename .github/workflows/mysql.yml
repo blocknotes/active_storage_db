@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         ruby: ['2.6', '2.7']
-        gemfile: ['rails_6_1_mysql']
+        gemfile: ['rails_6_1_mysql', 'rails_6_0_mysql']
         # gemfile: ['rails_7_0_mysql', 'rails_6_1_mysql', 'rails_6_0_mysql']
 
     env:
