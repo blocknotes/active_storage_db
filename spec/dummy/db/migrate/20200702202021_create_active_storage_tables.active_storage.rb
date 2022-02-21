@@ -1,12 +1,12 @@
 # This migration comes from active_storage (originally 20170806125915)
-class CreateActiveStorageTables < ActiveRecord::Migration[5.2]
+class CreateActiveStorageTables < ActiveRecord::Migration[6.0]
   def change
     create_table :active_storage_blobs do |t|
       t.string   :key,          null: false
       t.string   :filename,     null: false
       t.string   :content_type
       t.text     :metadata
-      t.string   :service_name, null: false
+      t.string   :service_name, null: false if !(Rails::VERSION::MAJOR == 6 && Rails::VERSION::MINOR == 0)
       t.bigint   :byte_size,    null: false
       t.string   :checksum,     null: false
       t.datetime :created_at,   null: false
