@@ -12,9 +12,12 @@ jobs:
 
     strategy:
       matrix:
-        ruby: ['2.5', '2.6', '2.7']
+        ruby: ['2.6', '2.7']
+        gemfile: ['rails_6_1_postgres']
+        # gemfile: ['rails_7_0_postgres', 'rails_6_1_postgres', 'rails_6_0_postgres']
 
     env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}.gemfile
       DB_TEST: postgres
       PG_DB_HOST: 127.0.0.1
       PG_DB_USERNAME: postgres
@@ -35,21 +38,24 @@ jobs:
           - 5432:5432
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v2
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+          bundler-cache: true
+
       - name: Set up database
         run: bundle exec rails db:setup
-      - name: Run tests
-        run: bundle exec rake
 
-#      - name: Upload coverage results
-#        uses: actions/upload-artifact@master
-#        if: always()
-#        with:
-#          name: coverage-report
-#          path: coverage/index.html
+      - name: Run tests
+        run: bundle exec rspec
+
+    #  - name: Upload coverage results
+    #    uses: actions/upload-artifact@master
+    #    if: always()
+    #    with:
+    #      name: coverage-report
+    #      path: coverage/index.html
