@@ -16,7 +16,8 @@ RDoc::Task.new(:rdoc) do |rdoc|
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
-APP_RAKEFILE = File.expand_path('spec/dummy/Rakefile', __dir__)
+dummy_app = ENV['RAILS_7'] ? 'dummy7' : 'dummy'
+APP_RAKEFILE = File.expand_path("spec/#{dummy_app}/Rakefile", __dir__)
 load 'rails/tasks/engine.rake'
 
 load 'rails/tasks/statistics.rake'

@@ -10,6 +10,14 @@ pkg/
 /spec/dummy/tmp/
 /spec/dummy/db/schema.rb
 
+/spec/dummy7/db/*.sqlite3
+/spec/dummy7/db/*.sqlite3-journal
+/spec/dummy7/db/*.sqlite3-*
+/spec/dummy7/log/*
+/spec/dummy7/storage/
+/spec/dummy7/tmp/
+/spec/dummy7/db/schema.rb
+
 /.rubocop-*
 /coverage/
 /Gemfile.lock
