@@ -8,6 +8,7 @@ pkg/
 /spec/dummy/log/*
 /spec/dummy/storage/
 /spec/dummy/tmp/
+/spec/dummy/db/schema.rb
 
 /.rubocop-*
 /coverage/
