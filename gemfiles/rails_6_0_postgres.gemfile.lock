@@ -2,8 +2,8 @@ PATH
   remote: ..
   specs:
     active_storage_db (0.2.0)
-      activestorage (~> 6.0)
-      rails (~> 6.0)
+      activestorage (>= 6.0)
+      rails (>= 6.0)
 
 GEM
   remote: https://rubygems.org/
@@ -251,23 +251,23 @@ DEPENDENCIES
   active_storage_db!
   appraisal (~> 2.4)
   brakeman
-  capybara (~> 3.33)
-  database_cleaner-active_record (~> 1.8)
+  capybara
+  database_cleaner-active_record
   factory_bot_rails (~> 6.1)
   fasterer
-  pg (~> 1.2)
+  pg
   pry-rails
   rails (~> 6.0.0)
   reek
-  rspec-rails (~> 4.0)
-  rspec_junit_formatter (~> 0.4)
+  rspec-rails
+  rspec_junit_formatter
   rubocop
   rubocop-packaging
   rubocop-performance
   rubocop-rails
   rubocop-rspec
-  selenium-webdriver (~> 3.142)
-  simplecov (~> 0.18)
+  selenium-webdriver
+  simplecov
 
 BUNDLED WITH
    2.2.33

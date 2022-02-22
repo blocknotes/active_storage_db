@@ -6,14 +6,14 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 gemspec
 
 group :development, :test do
-  gem 'capybara', '~> 3.33'
-  gem 'database_cleaner-active_record', '~> 1.8'
-  gem 'mysql2', '~> 0.5' if ENV['DB_TEST'] == 'mysql'
-  gem 'pg', '~> 1.2' if ['postgres', 'postgresql'].include? ENV['DB_TEST']
-  gem 'rspec_junit_formatter', '~> 0.4'
-  gem 'rspec-rails', '~> 4.0'
-  gem 'selenium-webdriver', '~> 3.142'
-  gem 'simplecov', '~> 0.18'
+  gem 'capybara'
+  gem 'database_cleaner-active_record'
+  gem 'mysql2' if ENV['DB_TEST'] == 'mysql'
+  gem 'pg' if ['postgres', 'postgresql'].include? ENV['DB_TEST']
+  gem 'rspec_junit_formatter'
+  gem 'rspec-rails'
+  gem 'selenium-webdriver'
+  gem 'simplecov'
 
   # Linters
   gem 'brakeman'
