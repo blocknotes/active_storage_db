@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         ruby: ['2.6', '2.7']
-        gemfile: ['rails_6_1_mysql']
+        gemfile: ['rails_6_1_mysql', 'rails_6_0_mysql']
         # gemfile: ['rails_7_0_mysql', 'rails_6_1_mysql', 'rails_6_0_mysql']
 
     env:
@@ -50,8 +50,11 @@ jobs:
       - name: Start database service
         run: sudo /etc/init.d/mysql start
 
-      - name: Set up database
-        run: bundle exec rails db:setup
+      - name: Create database
+        run: bundle exec rails db:create
+
+      - name: Apply migrations
+        run: bundle exec rails db:migrate
 
       - name: Run tests
         run: bundle exec rspec
