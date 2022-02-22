@@ -5,9 +5,10 @@ on:
   push:
     branches: [master]
   pull_request:
+    branches: [master]
 
 jobs:
-  test:
+  tests:
     runs-on: ubuntu-latest
 
     strategy:
@@ -54,7 +55,7 @@ jobs:
         run: bundle exec rails db:migrate
 
       - name: Run tests
-        run: bundle exec rspec
+        run: bundle exec rspec --profile
 
     #  - name: Upload coverage results
     #    uses: actions/upload-artifact@master
