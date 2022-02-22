@@ -22,9 +22,22 @@ RSpec.describe 'File controller', type: :request do
 
   let(:blob) { create_blob(filename: 'img.jpg', content_type: 'image/jpg') }
   let(:host) { 'http://test.example.com:3001' }
+  let(:url_options) do
+    {
+      protocol: 'http://',
+      host: 'test.example.com',
+      port: '3001',
+    }
+  end
   let(:engine_url_helpers) { ::ActiveStorageDB::Engine.routes.url_helpers }
 
-  before { allow(ActiveStorage::Current).to receive(:host).and_return(host) }
+  before do
+    if ActiveStorage::Current.respond_to? :url_options
+      allow(ActiveStorage::Current).to receive(:url_options).and_return(url_options)
+    else
+      allow(ActiveStorage::Current).to receive(:host).and_return(host)
+    end
+  end
 
   it 'creates a new File entity in the DB' do
     expect { create_blob }.to change(ActiveStorageDB::File, :count).from(0).to(1)
@@ -32,7 +45,8 @@ RSpec.describe 'File controller', type: :request do
 
   describe '.show' do
     it 'returns the blob as inline' do
-      get blob.service_url
+      blob_url = blob.respond_to?(:url) ? blob.url : blob.service_url
+      get blob_url
 
       expect(response).to have_http_status(:ok)
       expect(response.content_type).to eq('image/jpg')
@@ -42,7 +56,8 @@ RSpec.describe 'File controller', type: :request do
     end
 
     it 'returns the blob as attachment' do
-      get blob.service_url(disposition: :attachment)
+      url = blob.respond_to?(:url) ? blob.url(disposition: :attachment) : blob.service_url(disposition: :attachment)
+      get url
 
       expect(response).to have_http_status(:ok)
       expect(response.content_type).to eq('image/jpg')
@@ -57,7 +72,8 @@ RSpec.describe 'File controller', type: :request do
       before { blob.delete }
 
       it 'returns not found' do
-        get blob.service_url
+        blob_url = blob.respond_to?(:url) ? blob.url : blob.service_url
+        get blob_url
 
         expect(response).to have_http_status(:not_found)
       end

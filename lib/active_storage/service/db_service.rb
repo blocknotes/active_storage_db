@@ -83,7 +83,7 @@ module ActiveStorage
       end
     end
 
-    def url_for_direct_upload(key, expires_in:, content_type:, content_length:, checksum:)
+    def url_for_direct_upload(key, expires_in:, content_type:, content_length:, checksum:, custom_metadata: {})
       instrument :url, key: key do |payload|
         verified_token_with_expiration = ActiveStorage.verifier.generate(
           {
@@ -95,10 +95,7 @@ module ActiveStorage
           expires_in: expires_in,
           purpose: :blob_token
         )
-        generated_url = url_helpers.update_service_url(
-          verified_token_with_expiration,
-          host: current_host
-        )
+        generated_url = url_helpers.update_service_url(verified_token_with_expiration, host: current_host)
         payload[:url] = generated_url
 
         generated_url
@@ -112,7 +109,14 @@ module ActiveStorage
     private
 
     def current_host
-      ActiveStorage::Current.host
+      if ActiveStorage::Current.respond_to? :url_options
+        opts = ActiveStorage::Current.url_options || {}
+        url = "#{opts[:protocol]}#{opts[:host]}"
+        url += ":#{opts[:port]}" if opts[:port]
+        url || ''
+      else
+        ActiveStorage::Current.host
+      end
     end
 
     def ensure_integrity_of(key, checksum)
