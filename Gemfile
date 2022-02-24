@@ -7,7 +7,6 @@ gemspec
 
 group :development, :test do
   gem 'capybara'
-  gem 'database_cleaner-active_record'
   gem 'mysql2' if ENV['DB_TEST'] == 'mysql'
   gem 'pg' if ['postgres', 'postgresql'].include? ENV['DB_TEST']
   gem 'rspec_junit_formatter'

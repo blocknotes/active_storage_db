@@ -96,10 +96,6 @@ GEM
     colorize (0.8.1)
     concurrent-ruby (1.1.9)
     crass (1.0.6)
-    database_cleaner-active_record (2.0.1)
-      activerecord (>= 5.a)
-      database_cleaner-core (~> 2.0.0)
-    database_cleaner-core (2.0.1)
     diff-lcs (1.5.0)
     digest (3.1.0)
     docile (1.4.0)
@@ -274,7 +270,6 @@ DEPENDENCIES
   appraisal (~> 2.4)
   brakeman
   capybara
-  database_cleaner-active_record
   factory_bot_rails (~> 6.1)
   fasterer
   mysql2
