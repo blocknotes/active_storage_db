@@ -21,7 +21,6 @@ RSpec.describe 'File controller', type: :request do
   end
 
   let(:blob) { create_blob(filename: 'img.jpg', content_type: 'image/jpg') }
-  let(:host) { 'http://test.example.com:3001' }
   let(:url_options) do
     {
       protocol: 'http://',
@@ -29,6 +28,7 @@ RSpec.describe 'File controller', type: :request do
       port: '3001',
     }
   end
+  let(:host) { "#{url_options[:protocol]}#{url_options[:host]}:#{url_options[:port]}" }
   let(:engine_url_helpers) { ::ActiveStorageDB::Engine.routes.url_helpers }
 
   before do
@@ -135,6 +135,20 @@ RSpec.describe 'File controller', type: :request do
         put engine_url_helpers.update_service_path(encoded_token: 'Invalid token')
 
         expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context 'when the integrity check fails' do
+      let(:invalid_file) { create(:active_storage_db_file, data: 'Some other data') }
+
+      before do
+        allow(::ActiveStorageDB::File).to receive(:find_by).and_return(invalid_file)
+      end
+
+      it 'fails to upload' do
+        put blob.service_url_for_direct_upload, params: data, headers: { 'Content-Type' => 'text/plain' }
+
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
