@@ -1,11 +1,24 @@
 # frozen_string_literal: true
 
+require 'active_storage/service/db_service_rails60'
+require 'active_storage/service/db_service_rails61'
+require 'active_storage/service/db_service_rails70'
+
 module ActiveStorage
   # Wraps a DB table as an Active Storage service. See ActiveStorage::Service
   # for the generic API documentation that applies to all services.
   class Service::DBService < Service
-    def initialize(**)
+    if Rails::VERSION::MAJOR >= 7
+      include ActiveStorage::DBServiceRails70
+    elsif Rails::VERSION::MAJOR == 6 && Rails::VERSION::MINOR == 1
+      include ActiveStorage::DBServiceRails61
+    else
+      include ActiveStorage::DBServiceRails60
+    end
+
+    def initialize(public: false, **)
       @chunk_size = ENV.fetch('ASDB_CHUNK_SIZE') { 1.megabytes }
+      @public = public
     end
 
     def upload(key, io, checksum: nil, **)
@@ -62,17 +75,6 @@ module ActiveStorage
       end
     end
 
-    if Rails::VERSION::MAJOR == 6 && Rails::VERSION::MINOR == 0
-      def url(key, expires_in:, filename:, disposition:, content_type:)
-        instrument :url, key: key do |payload|
-          opts = { expires_in: expires_in, filename: filename, content_type: content_type, disposition: disposition }
-          generate_url(key, opts).tap do |generated_url|
-            payload[:url] = generated_url
-          end
-        end
-      end
-    end
-
     def url_for_direct_upload(key, expires_in:, content_type:, content_length:, checksum:, custom_metadata: {})
       instrument :url, key: key do |payload|
         verified_token_with_expiration = ActiveStorage.verifier.generate(
@@ -98,25 +100,6 @@ module ActiveStorage
     end
 
     private
-
-    def current_host
-      if ActiveStorage::Current.respond_to? :url_options
-        opts = ActiveStorage::Current.url_options || {}
-        url = "#{opts[:protocol]}#{opts[:host]}"
-        url += ":#{opts[:port]}" if opts[:port]
-        url || ''
-      else
-        ActiveStorage::Current.host
-      end
-    end
-
-    def private_url(key, expires_in:, filename:, content_type:, disposition:, **)
-      generate_url(key, expires_in: expires_in, filename: filename, content_type: content_type, disposition: disposition)
-    end
-
-    def public_url(key, filename:, content_type: nil, disposition: :attachment, **)
-      generate_url(key, expires_in: nil, filename: filename, content_type: content_type, disposition: disposition)
-    end
 
     def generate_url(key, expires_in:, filename:, content_type:, disposition:)
       content_disposition = content_disposition_with(type: disposition, filename: filename)
@@ -163,14 +146,6 @@ module ActiveStorage
 
     def url_helpers
       @url_helpers ||= ::ActiveStorageDB::Engine.routes.url_helpers
-    end
-
-    def url_options
-      if ActiveStorage::Current.respond_to? :url_options
-        ActiveStorage::Current.url_options
-      else
-        { host: ActiveStorage::Current.host }
-      end
     end
   end
 end

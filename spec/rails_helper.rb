@@ -6,6 +6,12 @@ SimpleCov.start :rails do
   add_filter %r{^/lib/active_storage_db/version.rb}
   add_filter %r{^/spec/}
   add_filter %r{^/vendor/}
+
+  case ENV['RAILS']
+  when '6.0' then add_filter /_rails61|_rails70/
+  when '6.1' then add_filter /_rails60|_rails70/
+  when '7.0' then add_filter /_rails60|_rails61/
+  end
 end
 
 require 'spec_helper'
@@ -35,13 +41,22 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
 
   config.before(:suite) do
+    db_config =
+      if ActiveRecord::Base.respond_to? :connection_db_config
+        ActiveRecord::Base.connection_db_config.configuration_hash
+      else
+        ActiveRecord::Base.connection_config
+      end
+
     intro = ('-' * 80)
     intro << "\n"
     intro << "- Ruby:          #{RUBY_VERSION}\n"
     intro << "- Rails:         #{Rails.version}\n"
     intro << "- ActiveStorage: #{ActiveStorage.version}\n"
-    intro << "- DB_TEST:       #{ENV['DB_TEST']}\n"
+    intro << "- DB adapter:    #{db_config[:adapter]}\n"
+    intro << "- DB name:       #{db_config[:database]}\n"
     intro << ('-' * 80)
+
     RSpec.configuration.reporter.message(intro)
   end
 end
