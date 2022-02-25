@@ -11,7 +11,7 @@ end
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
 
-dummy_app = ENV['RAILS_7'] ? 'dummy7' : 'dummy'
+dummy_app = (ENV['RAILS'] == '7.0' ? 'dummy7' : 'dummy')
 require File.expand_path("#{dummy_app}/config/environment.rb", __dir__)
 
 abort('The Rails environment is running in production mode!') if Rails.env.production?

@@ -4,7 +4,7 @@ test: &test
   adapter: mysql2
   host: <%= ENV.fetch('MYSQL_DB_HOST') { '127.0.0.1' } %>
   # port: <%= ENV.fetch('MYSQL_DB_PORT') { 3306 } %>
-  database: <%= ENV.fetch('MYSQL_DB_NAME') { 'active_storage_db-test' } %>
+  database: <%= ENV.fetch('MYSQL_DB_NAME') { "active_storage_db_#{ENV['RAILS']&.tr('.', '')}-test" } %>
   username: <%= ENV.fetch('MYSQL_DB_USERNAME') { '' } %>
   password: <%= ENV.fetch('MYSQL_DB_PASSWORD') { '' } %>
   encoding: utf8
@@ -13,7 +13,7 @@ test: &test
 test: &test
   adapter: postgresql
   host: <%= ENV.fetch('PG_DB_HOST') { '127.0.0.1' } %>
-  database: <%= ENV.fetch('PG_DB_NAME') { 'active_storage_db-test' } %>
+  database: <%= ENV.fetch('PG_DB_NAME') { "active_storage_db_#{ENV['RAILS']&.tr('.', '')}-test" } %>
   username: <%= ENV.fetch('PG_DB_USERNAME') { '' } %>
   password: <%= ENV.fetch('PG_DB_PASSWORD') { '' } %>
   encoding: utf8
@@ -25,4 +25,4 @@ test: &test
 
 development:
   <<: *test
-  database: active_storage_db-dev
+  database: "active_storage_db_#{ENV['RAILS']&.tr('.', '')}-dev"

@@ -5,7 +5,7 @@
 ENV['DB_TEST'] ||= 'postgres'
 ENV['RAILS_ENV'] ||= 'test'
 
-dummy_app = ENV['RAILS_7'] ? 'dummy7' : 'dummy'
+dummy_app = (ENV['RAILS'] == '7.0' ? 'dummy7' : 'dummy')
 
 ENGINE_ROOT = File.expand_path('..', __dir__)
 ENGINE_PATH = File.expand_path('../lib/active_storage_db/engine', __dir__)
