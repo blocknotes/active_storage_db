@@ -48,6 +48,22 @@ RSpec.describe ActiveStorage::Service::DBService do
     end
   end
 
+  if Rails::VERSION::MAJOR >= 7
+    describe '.compose' do
+      subject(:compose) { service.compose(%w[key1 key2 key3], 'dest_key') }
+
+      let!(:db_file1) { create(:active_storage_db_file, ref: 'key1', data: 'first file') }
+      let!(:db_file2) { create(:active_storage_db_file, ref: 'key2', data: 'second file') }
+      let!(:db_file3) { create(:active_storage_db_file, ref: 'key3', data: 'third file') }
+
+      it 'composes the source files' do
+        expect { compose }.to change { ::ActiveStorageDB::File.where(ref: 'dest_key').count }.by(1)
+        expect(compose).to be_kind_of ::ActiveStorageDB::File
+        expect(compose.data).to eq [db_file1.data, db_file2.data, db_file3.data].join
+      end
+    end
+  end
+
   describe '.delete' do
     subject(:delete) { service.delete(key) }
 

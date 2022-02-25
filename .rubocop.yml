@@ -36,7 +36,7 @@ RSpec/MultipleExpectations:
 
 RSpec/MultipleMemoizedHelpers:
   # Default is 5
-  Max: 10
+  Max: 12
 
 RSpec/NestedGroups:
   # Default is 3

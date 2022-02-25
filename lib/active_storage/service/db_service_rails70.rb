@@ -2,6 +2,19 @@
 
 module ActiveStorage
   module DBServiceRails70
+    def compose(source_keys, destination_key, **)
+      buffer = nil
+      source_keys.each do |source_key|
+        data = ::ActiveStorageDB::File.find_by!(ref: source_key).data
+        if buffer
+          buffer << data
+        else
+          buffer = data
+        end
+      end
+      ::ActiveStorageDB::File.create!(ref: destination_key, data: buffer) if buffer
+    end
+
     private
 
     def current_host
