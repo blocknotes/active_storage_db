@@ -15,13 +15,6 @@ AllCops:
     - vendor/**/*
   TargetRubyVersion: 2.6
 
-Gemspec/RequiredRubyVersion:
-  Enabled: false
-
-Layout/LineLength:
-  Enabled: true
-  Max: 120
-
 RSpec/MultipleExpectations:
   # Default is 1
   Max: 5
