@@ -12,8 +12,16 @@ AllCops:
     - db/schema.rb
     - gemfiles/*
     - spec/dummy/**/*
+    - spec/dummy7/**/*
     - vendor/**/*
   TargetRubyVersion: 2.6
+
+Lint/UnusedMethodArgument:
+  AllowUnusedKeywordArguments: true
+
+RSpec/ExampleLength:
+  # Default is 5
+  Max: 10
 
 RSpec/MultipleExpectations:
   # Default is 1
@@ -26,6 +34,3 @@ RSpec/MultipleMemoizedHelpers:
 RSpec/NestedGroups:
   # Default is 3
   Max: 5
-
-RSpec/ExampleLength:
-  Max: 6

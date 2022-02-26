@@ -1,5 +1,12 @@
 # Development
 
+```sh
+# Running tests on Rails 6.1:
+DB_TEST=postgres bin/appraisal rails-6_1-postgres rspec
+# Running tests on Rails 7.0:
+DB_TEST=postgres RAILS_7=1 bin/appraisal rails-7_0-postgres rspec
+```
+
 ## Tests using Docker
 
 ```sh

@@ -4,6 +4,14 @@ RSpec.describe ActiveStorage::Service::DBService do
   let(:fixture_data) { build(:active_storage_db_file).data }
   let(:content_type) { 'image/png' }
   let(:host) { 'http://test.example.com:3001' }
+  let(:url_options) do
+    {
+      protocol: 'http://',
+      host: 'test.example.com',
+      port: '3001',
+    }
+  end
+
   let(:checksum) { Digest::MD5.base64digest(fixture_data) }
   let(:key) { SecureRandom.base58(24) }
   let(:service) { described_class.configure(:tmp, tmp: { service: 'DB' }) }
@@ -138,12 +146,16 @@ RSpec.describe ActiveStorage::Service::DBService do
 
     before do
       upload
-      allow(ActiveStorage::Current).to receive(:host).and_return(host)
+      if ActiveStorage::Current.respond_to? :url_options
+        allow(ActiveStorage::Current).to receive(:url_options).and_return(url_options)
+      else
+        allow(ActiveStorage::Current).to receive(:host).and_return(host)
+      end
     end
 
     after { service.delete(key) }
 
-    it { is_expected.to start_with host }
+    it { is_expected.to start_with "#{url_options[:protocol]}#{url_options[:host]}" }
   end
 
   describe '.url_for_direct_upload' do
@@ -155,11 +167,15 @@ RSpec.describe ActiveStorage::Service::DBService do
 
     before do
       upload
-      allow(ActiveStorage::Current).to receive(:host).and_return(host)
+      if ActiveStorage::Current.respond_to? :url_options
+        allow(ActiveStorage::Current).to receive(:url_options).and_return(url_options)
+      else
+        allow(ActiveStorage::Current).to receive(:host).and_return(host)
+      end
     end
 
     after { service.delete(key) }
 
-    it { is_expected.to start_with host }
+    it { is_expected.to start_with "#{url_options[:protocol]}#{url_options[:host]}" }
   end
 end
