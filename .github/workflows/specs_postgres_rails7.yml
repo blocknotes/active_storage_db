@@ -2,9 +2,9 @@
 name: Specs - Postgres
 
 on:
-  push:
-    branches: [master]
   pull_request:
+    branches: [master]
+  push:
     branches: [master]
 
 jobs:
