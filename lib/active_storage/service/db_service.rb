@@ -128,7 +128,7 @@ module ActiveStorage
         ::ActiveStorageDB::File.select('OCTET_LENGTH(data) AS size').find_by(ref: key)&.size ||
         raise(ActiveStorage::FileNotFoundError)
       (size / @chunk_size.to_f).ceil.times.each do |i|
-        range = (i * @chunk_size..(i + 1) * @chunk_size - 1)
+        range = (i * @chunk_size..((i + 1) * @chunk_size) - 1)
         yield download_chunk(key, range)
       end
     end
