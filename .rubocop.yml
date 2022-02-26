@@ -13,7 +13,7 @@ AllCops:
     - gemfiles/*
     - spec/dummy/**/*
     - vendor/**/*
-  TargetRubyVersion: 2.7
+  TargetRubyVersion: 2.6
 
 Gemspec/RequiredRubyVersion:
   Enabled: false
