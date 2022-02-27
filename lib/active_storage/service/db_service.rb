@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module ActiveStorage
-  class Service::DBService < Service # rubocop:disable Style/ClassAndModuleChildren
-    def initialize(**_config)
+  class Service::DBService < Service
+    def initialize(**_options)
       @chunk_size = ENV.fetch('ASDB_CHUNK_SIZE') { 1.megabytes }
     end
 
