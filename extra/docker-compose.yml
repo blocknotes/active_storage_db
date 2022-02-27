@@ -2,9 +2,15 @@
 version: "3.3"
 
 x-defaults:
-  tests: &base_tests
-    environment: &base_enviroment
+  tests_mysql: &tests_mysql
+    environment:
       CI: 1
+      DB_TEST: mysql
+      DB_PORT: 3306
+      MYSQL_DB_HOST: mysql
+      MYSQL_DB_NAME: test_db
+      MYSQL_DB_USERNAME: root
+      MYSQL_DB_PASSWORD: password
       RAILS_ENV: test
     command:
       - sh
@@ -17,6 +23,36 @@ x-defaults:
         bin/setup
         cd ../..
         bin/rspec
+    volumes:
+      - ..:/usr/src/app:delegated
+    depends_on:
+      - mysql
+
+  tests_postgres: &tests_postgres
+    environment:
+      CI: 1
+      DB_TEST: postgres
+      DB_PORT: 5432
+      PG_DB_HOST: postgres
+      PG_DB_NAME: test_db
+      PG_DB_USERNAME: postgres
+      PG_DB_PASSWORD: password
+      RAILS_ENV: test
+    command:
+      - sh
+      - -c
+      - |
+        while ! nc -z $${DB_TEST} $${DB_PORT} </dev/null
+        do echo "Waiting for DB ($${DB_TEST})..." && sleep 5; done
+        echo "DB is now available!"
+        cd spec/dummy
+        bin/setup
+        cd ../..
+        bin/rspec
+    volumes:
+      - ..:/usr/src/app:delegated
+    depends_on:
+      - postgres
 
 services:
   postgres:
@@ -30,74 +66,50 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: password
 
-  tests_26_pg:
-    <<: *base_tests
-    build:
-      context: ..
-      dockerfile: extra/Dockerfile_27
-      args:
-        DB_TEST: postgres
-    environment:
-      <<: *base_enviroment
-      DB_TEST: postgres
-      DB_PORT: 5432
-      PG_DB_HOST: postgres
-      PG_DB_NAME: postgres_26
-      PG_DB_USERNAME: postgres
-      PG_DB_PASSWORD: password
-    depends_on:
-      - postgres
-
   tests_26_mysql:
-    <<: *base_tests
+    <<: *tests_mysql
     build:
       context: ..
       dockerfile: extra/Dockerfile_26
       args:
         DB_TEST: mysql
-    environment:
-      <<: *base_enviroment
-      DB_TEST: mysql
-      DB_PORT: 3306
-      MYSQL_DB_HOST: mysql
-      MYSQL_DB_NAME: mysql_26
-      MYSQL_DB_USERNAME: root
-      MYSQL_DB_PASSWORD: password
-    depends_on:
-      - mysql
 
-  tests_27_pg:
-    <<: *base_tests
+  tests_26_postgres:
+    <<: *tests_postgres
     build:
       context: ..
-      dockerfile: extra/Dockerfile_27
+      dockerfile: extra/Dockerfile_26
       args:
         DB_TEST: postgres
-    environment:
-      <<: *base_enviroment
-      DB_TEST: postgres
-      DB_PORT: 5432
-      PG_DB_HOST: postgres
-      PG_DB_NAME: postgres_27
-      PG_DB_USERNAME: postgres
-      PG_DB_PASSWORD: password
-    depends_on:
-      - postgres
 
   tests_27_mysql:
-    <<: *base_tests
+    <<: *tests_mysql
     build:
       context: ..
       dockerfile: extra/Dockerfile_27
       args:
         DB_TEST: mysql
-    environment:
-      <<: *base_enviroment
-      DB_TEST: mysql
-      DB_PORT: 3306
-      MYSQL_DB_HOST: mysql
-      MYSQL_DB_NAME: mysql_27
-      MYSQL_DB_USERNAME: root
-      MYSQL_DB_PASSWORD: password
-    depends_on:
-      - mysql
+
+  tests_27_postgres:
+    <<: *tests_postgres
+    build:
+      context: ..
+      dockerfile: extra/Dockerfile_27
+      args:
+        DB_TEST: postgres
+
+  tests_30_mysql:
+    <<: *tests_mysql
+    build:
+      context: ..
+      dockerfile: extra/Dockerfile_30
+      args:
+        DB_TEST: mysql
+
+  tests_30_postgres:
+    <<: *tests_postgres
+    build:
+      context: ..
+      dockerfile: extra/Dockerfile_30
+      args:
+        DB_TEST: postgres

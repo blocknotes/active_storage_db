@@ -7,7 +7,6 @@ RUN apk add --no-cache --update build-base dpkg gcompat mysql-dev postgresql-dev
 # App setup
 WORKDIR /usr/src/app
 COPY .. .
-RUN bundle install
 
 # Setup the entrypoint script
 COPY extra/entrypoint.sh /usr/bin/

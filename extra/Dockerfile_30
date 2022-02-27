@@ -1,9 +1,8 @@
-FROM ruby:2.6-alpine
+FROM ruby:3.0-alpine
 
 ARG DB_TEST
 
 RUN apk add --no-cache --update build-base dpkg gcompat mysql-dev postgresql-dev tzdata
-RUN gem install bundler
 
 # App setup
 WORKDIR /usr/src/app
