@@ -2,8 +2,8 @@
 
 [![gem version](https://badge.fury.io/rb/active_storage_db.svg)](https://badge.fury.io/rb/active_storage_db)
 [![linters](https://github.com/blocknotes/active_storage_db/actions/workflows/linters.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/linters.yml)
-[![specs Postgres](https://github.com/blocknotes/active_storage_db/actions/workflows/postgres.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/postgres.yml)
-[![specs MySQL](https://github.com/blocknotes/active_storage_db/actions/workflows/mysql.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/mysql.yml)
+[![specs - Postgres](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_postgres_rails7.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_postgres_rails7.yml)
+[![specs - MySQL](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_mysql_rails7.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_mysql_rails7.yml)
 
 An Active Storage service upload/download plugin that stores files in a PostgreSQL or MySQL database.
 
