@@ -15,8 +15,7 @@ RSpec.describe ActiveStorage::Service::DBService do
   let(:checksum) { Digest::MD5.base64digest(fixture_data) }
   let(:key) { SecureRandom.base58(24) }
   let(:service) { described_class.configure(:tmp, tmp: { service: 'DB' }) }
-  let(:upload_options) { {} }
-  let(:upload) { service.upload(key, StringIO.new(fixture_data), upload_options) }
+  let(:upload) { service.upload(key, StringIO.new(fixture_data)) }
 
   before do
     allow(ENV).to receive(:fetch).and_call_original
@@ -119,7 +118,7 @@ RSpec.describe ActiveStorage::Service::DBService do
     end
 
     context 'with the checksum' do
-      let(:upload_options) { { checksum: checksum } }
+      let(:upload) { service.upload(key, StringIO.new(fixture_data), checksum: checksum) }
 
       it 'uploads the data' do
         expect(upload).to be_kind_of ActiveStorageDB::File
@@ -129,7 +128,8 @@ RSpec.describe ActiveStorage::Service::DBService do
     end
 
     context 'with an invalid checksum' do
-      let(:upload_options) { { checksum: Digest::MD5.base64digest('some other data') } }
+      let(:checksum) { Digest::MD5.base64digest('some other data') }
+      let(:upload) { service.upload(key, StringIO.new(fixture_data), checksum: checksum) }
 
       it 'fails to upload the data' do
         expect { upload }.to raise_exception ActiveStorage::IntegrityError
@@ -159,10 +159,14 @@ RSpec.describe ActiveStorage::Service::DBService do
   end
 
   describe '.url_for_direct_upload' do
-    subject { service.url_for_direct_upload(key, url_options) }
-
-    let(:url_options) do
-      { expires_in: 5.minutes, content_type: content_type, content_length: fixture_data.size, checksum: checksum }
+    subject do
+      service.url_for_direct_upload(
+        key,
+        expires_in: 5.minutes,
+        content_type: content_type,
+        content_length: fixture_data.size,
+        checksum: checksum
+      )
     end
 
     before do
