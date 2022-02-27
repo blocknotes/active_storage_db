@@ -2,7 +2,7 @@
 
 module ActiveStorage
   class Service::DBService < Service
-    def initialize(**_options)
+    def initialize(**)
       @chunk_size = ENV.fetch('ASDB_CHUNK_SIZE') { 1.megabytes }
     end
 

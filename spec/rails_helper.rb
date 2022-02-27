@@ -37,6 +37,7 @@ RSpec.configure do |config|
   config.before(:suite) do
     intro = ('-' * 80)
     intro << "\n"
+    intro << "- Ruby:          #{RUBY_VERSION}\n"
     intro << "- Rails:         #{Rails.version}\n"
     intro << "- ActiveStorage: #{ActiveStorage.version}\n"
     intro << "- DB_TEST:       #{ENV['DB_TEST']}\n"
