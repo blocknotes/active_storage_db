@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe 'ActiveStorageDB tasks' do # rubocop:disable RSpec/DescribeClass
+RSpec.describe 'ActiveStorageDB tasks' do
   include_context 'with rake tasks'
 
   describe 'asdb:list' do
@@ -22,9 +22,7 @@ RSpec.describe 'ActiveStorageDB tasks' do # rubocop:disable RSpec/DescribeClass
   end
 
   describe 'asdb:get' do
-    subject(:task) { execute_task('asdb:get', options) }
-
-    let(:options) {}
+    subject(:task) { execute_task('asdb:get') }
 
     it 'exits showing the required arguments' do
       with_captured_stderr do
@@ -33,7 +31,7 @@ RSpec.describe 'ActiveStorageDB tasks' do # rubocop:disable RSpec/DescribeClass
     end
 
     context 'with only the source specified' do
-      let(:options) { { src: 'some_file' } }
+      subject(:task) { execute_task('asdb:get', src: 'some_file') }
 
       it 'exits showing the required arguments' do
         with_captured_stderr do
@@ -43,7 +41,7 @@ RSpec.describe 'ActiveStorageDB tasks' do # rubocop:disable RSpec/DescribeClass
     end
 
     context 'with an invalid destination' do
-      let(:options) { { src: 'some_file', dst: 'some_path' } }
+      subject(:task) { execute_task('asdb:get', src: 'some_file', dst: 'some_path') }
 
       before do
         allow(File).to receive(:writable?).and_return(false)
@@ -57,7 +55,7 @@ RSpec.describe 'ActiveStorageDB tasks' do # rubocop:disable RSpec/DescribeClass
     end
 
     context 'with a missing source' do
-      let(:options) { { src: 'some_file', dst: 'some_path' } }
+      subject(:task) { execute_task('asdb:get', src: 'some_file', dst: 'some_path') }
 
       before do
         allow(File).to receive(:writable?).and_return(true)
@@ -71,9 +69,10 @@ RSpec.describe 'ActiveStorageDB tasks' do # rubocop:disable RSpec/DescribeClass
     end
 
     context 'with valid arguments' do
+      subject(:task) { execute_task('asdb:get', src: blob.filename.to_s, dst: 'some_path') }
+
       let(:blob) { build_stubbed(:active_storage_blob) }
       let(:blobs) { instance_double(ActiveRecord::Relation) }
-      let(:options) { { src: blob.filename.to_s, dst: 'some_path' } }
 
       before do
         allow(File).to receive_messages(binwrite: 1000, writable?: true)

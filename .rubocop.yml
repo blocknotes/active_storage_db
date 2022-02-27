@@ -1,5 +1,4 @@
 inherit_from:
-  - .rubocop_todo.yml
   - https://relaxed.ruby.style/rubocop.yml
 
 require:
@@ -16,8 +15,16 @@ AllCops:
     - vendor/**/*
   TargetRubyVersion: 2.6
 
+Lint/MissingSuper:
+  Exclude:
+    - 'lib/active_storage/service/db_service.rb'
+
 Lint/UnusedMethodArgument:
   AllowUnusedKeywordArguments: true
+
+RSpec/DescribeClass:
+  Exclude:
+    - spec/tasks/active_storage_db_tasks_spec.rb
 
 RSpec/ExampleLength:
   # Default is 5
@@ -34,3 +41,7 @@ RSpec/MultipleMemoizedHelpers:
 RSpec/NestedGroups:
   # Default is 3
   Max: 5
+
+Style/ClassAndModuleChildren:
+  Exclude:
+    - 'lib/active_storage/service/db_service.rb'
