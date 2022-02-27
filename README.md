@@ -8,7 +8,7 @@
 An Active Storage service upload/download plugin that stores files in a PostgreSQL or MySQL database.
 
 Main features:
-- supports Rails 6.0, 6.1 and 7.0;
+- supports Rails _6.0_, _6.1_ and _7.0_;
 - all service methods implemented;
 - attachment data stored in a binary field (or blob).
 
@@ -30,10 +30,16 @@ db:
 
 ## Misc
 
-Some rake tasks are available:
+Some utility tasks are available:
 
-- `asdb:list`: list the stored attachments
-- `asdb:get`: download an attachment (ex. `bin/rails "asdb:get[ruby-logo.png,/tmp]"`)
+```sh
+# list attachments ordered by blob id desc (with limit 100):
+bin/rails 'asdb:list'
+# search attachments by filename (or part of it)
+bin/rails 'asdb:search[some_filename]'
+# download attachment by blob id (retrieved with list or search tasks) - the second argument is the destination:
+bin/rails 'asdb:download[123,/tmp]'
+```
 
 ## Do you like it? Star it!
 
