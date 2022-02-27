@@ -1,31 +1,64 @@
 # frozen_string_literal: true
 
+module ActiveStorage
+  module Tasks
+    module_function
+
+    def print_blob_header(digits: 0)
+      puts ['Size'.rjust(8), 'Date'.rjust(18), 'Id'.rjust(digits + 2), '  Filename'].join
+    end
+
+    def print_blob(blob, digits: 0)
+      size = (blob.byte_size / 1024).to_s.rjust(7)
+      date = blob.created_at.strftime('%Y-%m-%d %H:%M')
+      puts "#{size}K  #{date}  #{blob.id.to_s.rjust(digits)}  #{blob.filename}"
+    end
+  end
+end
+
 namespace :asdb do
-  desc 'ActiveStorageDB: list attachments'
+  desc 'ActiveStorageDB: list attachments ordered by blob id desc'
   task list: [:environment] do |_t, _args|
-    ::ActiveStorage::Blob.order(:filename).pluck(:byte_size, :created_at, :filename).each do |size, dt, filename|
-      size_k = (size / 1024).to_s.rjust(7)
-      date = dt.strftime('%Y-%m-%d %H:%M')
-      puts "#{size_k}K  #{date}  #{filename}"
+    query = ::ActiveStorage::Blob.order(id: :desc).limit(100)
+    digits = Math.log(query.maximum(:id), 10).to_i + 1
+
+    ::ActiveStorage::Tasks.print_blob_header(digits: digits)
+    query.each do |blob|
+      ::ActiveStorage::Tasks.print_blob(blob, digits: digits)
     end
   end
 
-  desc 'ActiveStorageDB: download attachment'
-  task :get, [:src, :dst] => [:environment] do |_t, args|
-    src = args[:src]&.strip
-    dst = args[:dst]&.strip
-    abort('Required arguments: source file, destination file') if src.blank? || dst.blank?
+  desc 'ActiveStorageDB: download attachment by blob id'
+  task :download, [:blob_id, :destination] => [:environment] do |_t, args|
+    blob_id = args[:blob_id]&.strip
+    destination = args[:destination]&.strip || Dir.pwd
+    abort('Required arguments: source blob id, destination path') if blob_id.blank? || destination.blank?
 
-    dst = "#{dst}/#{src}" if Dir.exist?(dst)
-    dir = File.dirname(dst)
-    abort("Can't write on: #{dir}") unless File.writable?(dir)
-
-    blob = ::ActiveStorage::Blob.order(created_at: :desc).find_by(filename: src)
+    blob = ::ActiveStorage::Blob.find_by(id: blob_id)
     abort('Source file not found') unless blob
 
-    ret = File.binwrite(dst, blob.download)
-    puts "#{ret} bytes written"
-  rescue StandardError => e
-    puts e
+    destination = "#{destination}/#{blob.filename}" if Dir.exist?(destination)
+    dir = File.dirname(destination)
+    abort("Can't write on path: #{dir}") unless File.writable?(dir)
+
+    ret = File.binwrite(destination, blob.download)
+    puts "#{ret} bytes written - #{destination}"
+  end
+
+  desc 'ActiveStorageDB: search attachment by filename (or part of it)'
+  task :search, [:filename] => [:environment] do |_t, args|
+    filename = args[:filename]&.strip
+    abort('Required arguments: filename') if filename.blank?
+
+    blobs = ::ActiveStorage::Blob.where('filename LIKE ?', "%#{filename}%").order(id: :desc)
+    if blobs.any?
+      digits = Math.log(blobs.first.id, 10).to_i + 1
+      ::ActiveStorage::Tasks.print_blob_header(digits: digits)
+      blobs.each do |blob|
+        ::ActiveStorage::Tasks.print_blob(blob, digits: digits)
+      end
+    else
+      puts 'No results'
+    end
   end
 end
