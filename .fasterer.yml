@@ -2,8 +2,7 @@
 exclude_paths:
   - bin/*
   - db/schema.rb
-  - spec/dummy/**/*
-  - spec/dummy7/**/*
+  - spec/dummy??/**/*
   - vendor/**/*
 
 speedups:
