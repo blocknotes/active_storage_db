@@ -3,7 +3,6 @@
 RSpec.describe ActiveStorage::Service::DBService do
   let(:fixture_data) { build(:active_storage_db_file).data }
   let(:content_type) { 'image/png' }
-  let(:host) { 'http://test.example.com:3001' }
   let(:url_options) do
     {
       protocol: 'http://',
@@ -11,6 +10,7 @@ RSpec.describe ActiveStorage::Service::DBService do
       port: '3001',
     }
   end
+  let(:host) { "#{url_options[:protocol]}#{url_options[:host]}:#{url_options[:port]}" }
 
   let(:checksum) { Digest::MD5.base64digest(fixture_data) }
   let(:key) { SecureRandom.base58(24) }
@@ -20,6 +20,48 @@ RSpec.describe ActiveStorage::Service::DBService do
   before do
     allow(ENV).to receive(:fetch).and_call_original
     allow(ENV).to receive(:fetch).with('ASDB_CHUNK_SIZE').and_return(100)
+  end
+
+  describe 'public URL generation' do
+    let(:config) do
+      {
+        db: {
+          service: 'db',
+          public: true
+        }
+      }
+    end
+
+    before do
+      if ActiveStorage::Current.respond_to? :url_options
+        allow(ActiveStorage::Current).to receive(:url_options).and_return(url_options)
+      else
+        allow(ActiveStorage::Current).to receive(:host).and_return(host)
+      end
+    end
+
+    it 'returns a public URL' do
+      filename = ActiveStorage::Filename.new('some_filename')
+      service = ActiveStorage::Service.configure(:db, config)
+      url = service.url('some_key', filename: filename, disposition: :inline, content_type: 'text/plain', expires_in: nil)
+      expect(url).to match %r{#{host}/active_storage_db/files/}
+    end
+  end
+
+  if Rails::VERSION::MAJOR >= 7
+    describe '.compose' do
+      subject(:compose) { service.compose(%w[key1 key2 key3], 'dest_key') }
+
+      let!(:db_file1) { create(:active_storage_db_file, ref: 'key1', data: 'first file') }
+      let!(:db_file2) { create(:active_storage_db_file, ref: 'key2', data: 'second file') }
+      let!(:db_file3) { create(:active_storage_db_file, ref: 'key3', data: 'third file') }
+
+      it 'composes the source files' do
+        expect { compose }.to change { ::ActiveStorageDB::File.where(ref: 'dest_key').count }.by(1)
+        expect(compose).to be_kind_of ::ActiveStorageDB::File
+        expect(compose.data).to eq [db_file1.data, db_file2.data, db_file3.data].join
+      end
+    end
   end
 
   describe '.delete' do
@@ -135,27 +177,6 @@ RSpec.describe ActiveStorage::Service::DBService do
         expect { upload }.to raise_exception ActiveStorage::IntegrityError
       end
     end
-  end
-
-  describe '.url' do
-    subject do
-      service.url(key, expires_in: 5.minutes, disposition: :inline, filename: filename, content_type: content_type)
-    end
-
-    let(:filename) { ActiveStorage::Filename.new('avatar.png') }
-
-    before do
-      upload
-      if ActiveStorage::Current.respond_to? :url_options
-        allow(ActiveStorage::Current).to receive(:url_options).and_return(url_options)
-      else
-        allow(ActiveStorage::Current).to receive(:host).and_return(host)
-      end
-    end
-
-    after { service.delete(key) }
-
-    it { is_expected.to start_with "#{url_options[:protocol]}#{url_options[:host]}" }
   end
 
   describe '.url_for_direct_upload' do
