@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module ActiveStorageDB
-  class File < ApplicationRecord
+  class File < ActiveRecord::Base
     validates :ref,
               presence: true,
               allow_blank: false,
