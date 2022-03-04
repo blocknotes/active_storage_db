@@ -1,0 +1,29 @@
+<%= form_for @post do |form| %>
+  <% if @post.errors.any? %>
+    <div><%= "#{pluralize(@post.errors.count, "error")} prohibited this post from being saved:" %></div>
+    <ul>
+      <% @post.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <div class="field">
+    <div class="title">Title:</div>
+    <%= form.text_field :title %>
+  </div>
+
+  <div class="field">
+    <div class="title">Content:</div>
+    <%= form.text_area :content %>
+  </div>
+
+  <div class="field">
+    <div class="title">Some file:</div>
+    <%= form.file_field :some_file %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,8 @@
+<h1>Post</h1>
+
+<%= render 'post', post: @post %>
+
+<hr/>
+
+<%= link_to 'Edit', edit_post_path(@post), class: 'button button-outline' %>
+<%= link_to 'Back', posts_path, class: 'button button-outline' %>
