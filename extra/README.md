@@ -1,17 +1,30 @@
 # Development
 
+## Releases
+
+```sh
+# Update lib/active_storage_db/version.rb with the new version
+# Update the gemfiles:
+bin/appraisal
+```
+
+## Local tests
+
 ```sh
 # Running tests on Rails 6.0:
-DB_TEST=postgres RAILS=6.0 bin/appraisal rails-6_0-postgres rails db:drop db:create db:migrate
+DB_TEST=postgres RAILS=6.0 bin/appraisal rails-6_0-postgres rails db:test:prepare
 DB_TEST=postgres RAILS=6.0 bin/appraisal rails-6_0-postgres rspec
 
 # Running tests on Rails 6.1:
-DB_TEST=postgres RAILS=6.1 bin/appraisal rails-6_1-postgres rails db:drop db:create db:migrate
+DB_TEST=postgres RAILS=6.1 bin/appraisal rails-6_1-postgres rails db:test:prepare
 DB_TEST=postgres RAILS=6.1 bin/appraisal rails-6_1-postgres rspec
 
 # Running tests on Rails 7.0:
-DB_TEST=postgres RAILS=7.0 bin/appraisal rails-7_0-postgres rails db:drop db:create db:migrate
+DB_TEST=postgres RAILS=7.0 bin/appraisal rails-7_0-postgres rails db:test:prepare
 DB_TEST=postgres RAILS=7.0 bin/appraisal rails-7_0-postgres rspec
+
+# Eventually recreate the DB:
+DB_TEST=postgres RAILS=7.0 bin/appraisal rails-7_0-postgres rails db:drop db:create db:migrate
 ```
 
 ## Tests using Docker
