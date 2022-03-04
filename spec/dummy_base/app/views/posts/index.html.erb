@@ -1,0 +1,15 @@
+<h1>Posts</h1>
+
+<ul>
+<% @posts.each do |post| %>
+  <li>
+    <%= post.title %><br/>
+    <% if post.content %>
+      <%= post.content %><br/>
+    <% end %>
+    <%= link_to 'Show', post, class: 'button button-outline' %>
+    <%= link_to 'Edit', edit_post_path(post), class: 'button button-outline' %>
+    <%= link_to 'Destroy', post, data: { confirm: 'Are you sure?' }, method: :delete, class: 'button button-outline' %>
+  </li>
+<% end %>
+</ul>

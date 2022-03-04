@@ -1,0 +1,10 @@
+<div>
+  <div class="item"><b>title</b>: <%= post.title %></div>
+  <div class="item"><b>content</b>: <%= post.content %></div>
+  <div class="item"><b>created_at</b>: <%= post.created_at %></div>
+  <% if post.some_file.attached?  %>
+  <div class="item">
+    <pre><%= post.some_file.download %></pre>
+  </div>
+  <% end %>
+</div>

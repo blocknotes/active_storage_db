@@ -10,8 +10,7 @@ AllCops:
     - bin/*
     - db/schema.rb
     - gemfiles/*
-    - spec/dummy/**/*
-    - spec/dummy7/**/*
+    - spec/dummy??/**/*
     - vendor/**/*
   TargetRubyVersion: 2.6
 

@@ -20,7 +20,7 @@ RSpec.describe 'File controller', type: :request do
     )
   end
 
-  let(:blob) { create_blob(filename: 'img.jpg', content_type: 'image/jpg') }
+  let(:blob) { create_blob(filename: 'img.jpg', content_type: 'image/jpeg') }
   let(:url_options) do
     {
       protocol: 'http://',
@@ -49,7 +49,7 @@ RSpec.describe 'File controller', type: :request do
       get blob_url
 
       expect(response).to have_http_status(:ok)
-      expect(response.content_type).to eq('image/jpg')
+      expect(response.content_type).to eq('image/jpeg')
       content_disposition = response.headers['Content-Disposition']
       expect(content_disposition).to eq("inline; filename=\"img.jpg\"; filename*=UTF-8''img.jpg")
       expect(response.body).to eq 'Hello world!'
@@ -60,7 +60,7 @@ RSpec.describe 'File controller', type: :request do
       get url
 
       expect(response).to have_http_status(:ok)
-      expect(response.content_type).to eq('image/jpg')
+      expect(response.content_type).to eq('image/jpeg')
       content_disposition = response.headers['Content-Disposition']
       expect(content_disposition).to eq("attachment; filename=\"img.jpg\"; filename*=UTF-8''img.jpg")
       expect(response.body).to eq 'Hello world!'

@@ -2,21 +2,12 @@
 log/*.log
 pkg/
 
-/spec/dummy/db/*.sqlite3
-/spec/dummy/db/*.sqlite3-journal
-/spec/dummy/db/*.sqlite3-*
-/spec/dummy/log/*
-/spec/dummy/storage/
-/spec/dummy/tmp/
-/spec/dummy/db/schema.rb
-
-/spec/dummy7/db/*.sqlite3
-/spec/dummy7/db/*.sqlite3-journal
-/spec/dummy7/db/*.sqlite3-*
-/spec/dummy7/log/*
-/spec/dummy7/storage/
-/spec/dummy7/tmp/
-/spec/dummy7/db/schema.rb
+/spec/dummy??/db/*.sqlite3
+/spec/dummy??/db/*.sqlite3-journal
+/spec/dummy??/db/*.sqlite3-*
+/spec/dummy??/log/
+/spec/dummy??/storage/
+/spec/dummy??/tmp/
 
 /.rubocop-*
 /coverage/

@@ -5,11 +5,11 @@
 ENV['DB_TEST'] ||= 'postgres'
 ENV['RAILS_ENV'] ||= 'test'
 
-dummy_app = (ENV['RAILS'] == '7.0' ? 'dummy7' : 'dummy')
+app_ver = ENV.fetch('RAILS', '').tr('.', '')
 
 ENGINE_ROOT = File.expand_path('..', __dir__)
 ENGINE_PATH = File.expand_path('../lib/active_storage_db/engine', __dir__)
-APP_PATH = File.expand_path("../spec/#{dummy_app}/config/application", __dir__)
+APP_PATH = File.expand_path("../spec/dummy#{app_ver}/config/application", __dir__)
 
 # Set up gems listed in the Gemfile.
 ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', __dir__)

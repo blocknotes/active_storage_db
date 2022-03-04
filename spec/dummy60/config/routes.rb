@@ -1,0 +1,1 @@
+../../dummy_base/config/routes.rb
