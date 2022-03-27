@@ -1,6 +1,19 @@
 # frozen_string_literal: true
 
 require 'simplecov'
+require 'simplecov-lcov'
+
+SimpleCov::Formatter::LcovFormatter.config do |c|
+  c.report_with_single_file = true
+  # c.single_report_path = ENV['LCOV_PATH'] if ENV['LCOV_PATH'].present?
+end
+
+simplecov_formatters = [
+  SimpleCov::Formatter::LcovFormatter,
+  SimpleCov.formatter
+]
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(simplecov_formatters)
+
 SimpleCov.start :rails do
   filters.clear
   add_filter %r{^/lib/active_storage_db/version.rb}

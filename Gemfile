@@ -6,13 +6,16 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 gemspec
 
 group :development, :test do
-  gem 'capybara'
   gem 'mysql2' if ENV['DB_TEST'] == 'mysql'
   gem 'pg' if ['postgres', 'postgresql'].include? ENV['DB_TEST']
+  gem 'simplecov'
+  gem 'simplecov-lcov'
+
+  # Testing
+  gem 'capybara'
   gem 'rspec_junit_formatter'
   gem 'rspec-rails'
   gem 'selenium-webdriver'
-  gem 'simplecov'
 
   # Linters
   gem 'brakeman'

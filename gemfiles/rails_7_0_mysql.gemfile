@@ -6,11 +6,12 @@ gem "mysql2"
 gem "rails", "~> 7.0.0"
 
 group :development, :test do
+  gem "simplecov"
+  gem "simplecov-lcov"
   gem "capybara"
   gem "rspec_junit_formatter"
   gem "rspec-rails"
   gem "selenium-webdriver"
-  gem "simplecov"
   gem "brakeman"
   gem "fasterer"
   gem "reek"

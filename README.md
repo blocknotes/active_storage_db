@@ -1,6 +1,9 @@
 # Active Storage DB
 
 [![gem version](https://badge.fury.io/rb/active_storage_db.svg)](https://badge.fury.io/rb/active_storage_db)
+[![gem downloads](https://badgen.net/rubygems/dt/active_storage_db)](https://rubygems.org/gems/active_storage_db)
+[![maintainability](https://api.codeclimate.com/v1/badges/92e1e703c308744a0f66/maintainability)](https://codeclimate.com/github/blocknotes/active_storage_db/maintainability)
+
 [![linters](https://github.com/blocknotes/active_storage_db/actions/workflows/linters.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/linters.yml)
 [![specs Postgres](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_postgres_70.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_postgres_70.yml)
 [![Specs MySQL](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_mysql_70.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_mysql_70.yml)
