@@ -247,6 +247,7 @@ GEM
       simplecov-html (~> 0.11)
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.12.3)
+    simplecov-lcov (0.8.0)
     simplecov_json_formatter (0.1.4)
     strscan (3.0.1)
     thor (1.2.1)
@@ -285,6 +286,7 @@ DEPENDENCIES
   rubocop-rspec
   selenium-webdriver
   simplecov
+  simplecov-lcov
 
 BUNDLED WITH
    2.3.8
