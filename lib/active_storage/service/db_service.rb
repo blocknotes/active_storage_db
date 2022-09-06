@@ -63,7 +63,7 @@ module ActiveStorage
 
     def delete_prefixed(prefix)
       instrument :delete_prefixed, prefix: prefix do
-        ::ActiveStorageDB::File.where('ref LIKE ?', "#{prefix}%").destroy_all
+        ::ActiveStorageDB::File.where('ref LIKE ?', "#{ApplicationRecord.sanitize_sql_like(prefix)}%").destroy_all
       end
     end
 
