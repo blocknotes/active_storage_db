@@ -36,18 +36,14 @@ module ActiveStorage
         end
       else
         instrument :download, key: key do
-          record = ::ActiveStorageDB::File.find_by(ref: key)
-          raise(ActiveStorage::FileNotFoundError) unless record
-
-          record.data
+          retrieve_file(key)
         end
       end
     end
 
     def download_chunk(key, range)
       instrument :download_chunk, key: key, range: range do
-        chunk_select = "SUBSTRING(data FROM #{range.begin + 1} FOR #{range.size}) AS chunk"
-        record = ::ActiveStorageDB::File.select(chunk_select).find_by(ref: key)
+        record = object_for(key, fields: "SUBSTRING(data FROM #{range.begin + 1} FOR #{range.size}) AS chunk")
         raise(ActiveStorage::FileNotFoundError) unless record
 
         record.chunk
@@ -127,17 +123,26 @@ module ActiveStorage
     end
 
     def ensure_integrity_of(key, checksum)
-      file = ::ActiveStorageDB::File.find_by(ref: key)
-      return if Digest::MD5.base64digest(file.data) == checksum
+      return if Digest::MD5.base64digest(object_for(key).data) == checksum
 
       delete(key)
       raise ActiveStorage::IntegrityError
     end
 
+    def retrieve_file(key)
+      file = object_for(key)
+      raise(ActiveStorage::FileNotFoundError) unless file
+
+      file.data
+    end
+
+    def object_for(key, fields: nil)
+      as_file = fields ? ::ActiveStorageDB::File.select(*fields) : ::ActiveStorageDB::File
+      as_file.find_by(ref: key)
+    end
+
     def stream(key)
-      size =
-        ::ActiveStorageDB::File.select('OCTET_LENGTH(data) AS size').find_by(ref: key)&.size ||
-        raise(ActiveStorage::FileNotFoundError)
+      size = object_for(key, fields: 'OCTET_LENGTH(data) AS size')&.size || raise(ActiveStorage::FileNotFoundError)
       (size / @chunk_size.to_f).ceil.times.each do |i|
         range = (i * @chunk_size..((i + 1) * @chunk_size) - 1)
         yield download_chunk(key, range)
