@@ -8,34 +8,41 @@ module ActiveStorageDB
       if (key = decode_verified_key)
         serve_file(key[:key], content_type: key[:content_type], disposition: key[:disposition])
       else
-        head :not_found
+        head(:not_found)
       end
     rescue ActiveStorage::FileNotFoundError
-      head :not_found
+      head(:not_found)
     end
 
     def update
       if (token = decode_verified_token)
-        if acceptable_content?(token)
-          db_service.upload(token[:key], request.body, checksum: token[:checksum])
-        else
-          head :unprocessable_entity
-        end
+        file_uploaded = upload_file(token, body: request.body)
+        head(file_uploaded ? :no_content : :unprocessable_entity)
       else
-        head :not_found
+        head(:not_found)
       end
     rescue ActiveStorage::IntegrityError
-      head :unprocessable_entity
+      head(:unprocessable_entity)
     end
 
     private
+
+    def acceptable_content?(token)
+      token[:content_type] == request.content_mime_type && token[:content_length] == request.content_length
+    end
 
     def db_service
       ActiveStorage::Blob.service
     end
 
     def decode_verified_key
-      ActiveStorage.verifier.verified(params[:encoded_key], purpose: :blob_key)
+      key = ActiveStorage.verifier.verified(params[:encoded_key], purpose: :blob_key)
+      key&.deep_symbolize_keys
+    end
+
+    def decode_verified_token
+      token = ActiveStorage.verifier.verified(params[:encoded_token], purpose: :blob_token)
+      token&.deep_symbolize_keys
     end
 
     def serve_file(key, content_type:, disposition:)
@@ -43,15 +50,14 @@ module ActiveStorageDB
         type: content_type || DEFAULT_SEND_FILE_TYPE,
         disposition: disposition || DEFAULT_SEND_FILE_DISPOSITION
       }
-      send_data db_service.download(key), options
+      send_data(db_service.download(key), options)
     end
 
-    def decode_verified_token
-      ActiveStorage.verifier.verified(params[:encoded_token], purpose: :blob_token)
-    end
+    def upload_file(token, body:)
+      return false unless acceptable_content?(token)
 
-    def acceptable_content?(token)
-      token[:content_type] == request.content_mime_type && token[:content_length] == request.content_length
+      db_service.upload(token[:key], request.body, checksum: token[:checksum])
+      true
     end
   end
 end
