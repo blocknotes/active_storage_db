@@ -1,5 +1,5 @@
 ---
-name: Specs Rails 7.0 MySQL
+name: Specs Rails 7.1 MySQL
 
 on:
   pull_request:
@@ -13,8 +13,8 @@ jobs:
 
     strategy:
       matrix:
-        ruby: ['2.7', '3.0']
-        gemfile: ['rails_7_0_mysql']
+        ruby: ['3.0', '3.1', '3.2']
+        gemfile: ['rails_7_1_mysql']
 
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}.gemfile
