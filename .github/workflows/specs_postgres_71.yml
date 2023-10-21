@@ -1,5 +1,5 @@
 ---
-name: Specs Rails 6.0 Postgres
+name: Specs Rails 7.1 Postgres
 
 on:
   pull_request:
@@ -13,8 +13,8 @@ jobs:
 
     strategy:
       matrix:
-        ruby: ['2.7', '3.0']
-        gemfile: ['rails_6_0_postgres']
+        ruby: ['3.0', '3.1', '3.2']
+        gemfile: ['rails_7_1_postgres']
 
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}.gemfile
@@ -22,7 +22,7 @@ jobs:
       PG_DB_HOST: 127.0.0.1
       PG_DB_USERNAME: postgres
       PG_DB_PASSWORD: postgres
-      RAILS: '6.0'
+      RAILS: '7.0'
 
     services:
       postgres:
@@ -40,7 +40,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -56,6 +56,14 @@ jobs:
 
       - name: Run tests
         run: bundle exec rspec --profile
+
+      - name: Code Climate test coverage
+        uses: paambaati/codeclimate-action@v3.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          coverageLocations: |
+            ${{github.workspace}}/coverage/lcov/active_storage_db.lcov:lcov
 
     #  - name: Upload coverage results
     #    uses: actions/upload-artifact@main
