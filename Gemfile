@@ -20,7 +20,6 @@ group :development, :test do
   # Linters
   gem 'brakeman'
   gem 'fasterer'
-  gem 'reek'
   gem 'rubocop'
   gem 'rubocop-packaging'
   gem 'rubocop-performance'

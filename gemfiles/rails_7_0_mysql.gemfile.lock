@@ -113,7 +113,6 @@ GEM
     i18n (1.10.0)
       concurrent-ruby (~> 1.0)
     io-wait (0.2.1)
-    kwalify (0.7.2)
     loofah (2.14.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -123,8 +122,9 @@ GEM
     matrix (0.4.2)
     method_source (1.0.0)
     mini_mime (1.1.2)
+    mini_portile2 (2.8.4)
     minitest (5.15.0)
-    mysql2 (0.5.3)
+    mysql2 (0.5.5)
     net-imap (0.2.3)
       digest
       net-protocol
@@ -141,9 +141,8 @@ GEM
       net-protocol
       timeout
     nio4r (2.5.8)
-    nokogiri (1.13.3-x86_64-darwin)
-      racc (~> 1.4)
-    nokogiri (1.13.3-x86_64-linux)
+    nokogiri (1.13.3)
+      mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
     parallel (1.21.0)
     parser (3.1.1.0)
@@ -186,10 +185,6 @@ GEM
       zeitwerk (~> 2.5)
     rainbow (3.1.1)
     rake (13.0.6)
-    reek (6.1.0)
-      kwalify (~> 0.7.0)
-      parser (~> 3.1.0)
-      rainbow (>= 2.0, < 4.0)
     regexp_parser (2.2.1)
     rexml (3.2.5)
     rspec-core (3.11.0)
@@ -263,6 +258,7 @@ GEM
     zeitwerk (2.5.4)
 
 PLATFORMS
+  arm64-darwin-22
   x86_64-darwin-21
   x86_64-linux
 
@@ -276,7 +272,6 @@ DEPENDENCIES
   mysql2
   pry-rails
   rails (~> 7.0.0)
-  reek
   rspec-rails
   rspec_junit_formatter
   rubocop
