@@ -3,9 +3,9 @@ name: Specs Rails 6.1 MySQL
 
 on:
   pull_request:
-    branches: [master]
+    branches: [main]
   push:
-    branches: [master]
+    branches: [main]
 
 jobs:
   tests:

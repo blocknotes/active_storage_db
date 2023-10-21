@@ -14,7 +14,6 @@ group :development, :test do
   gem "selenium-webdriver"
   gem "brakeman"
   gem "fasterer"
-  gem "reek"
   gem "rubocop"
   gem "rubocop-packaging"
   gem "rubocop-performance"

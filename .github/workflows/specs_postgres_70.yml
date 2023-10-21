@@ -3,9 +3,9 @@ name: Specs Rails 7.0 Postgres
 
 on:
   pull_request:
-    branches: [master]
+    branches: [main]
   push:
-    branches: [master]
+    branches: [main]
 
 jobs:
   tests:
@@ -66,7 +66,7 @@ jobs:
             ${{github.workspace}}/coverage/lcov/active_storage_db.lcov:lcov
 
     #  - name: Upload coverage results
-    #    uses: actions/upload-artifact@master
+    #    uses: actions/upload-artifact@main
     #    if: always()
     #    with:
     #      name: coverage-report

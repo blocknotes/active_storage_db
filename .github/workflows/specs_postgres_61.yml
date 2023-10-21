@@ -3,9 +3,9 @@ name: Specs Rails 6.1 Postgres
 
 on:
   pull_request:
-    branches: [master]
+    branches: [main]
   push:
-    branches: [master]
+    branches: [main]
 
 jobs:
   tests:
@@ -58,7 +58,7 @@ jobs:
         run: bundle exec rspec --profile
 
     #  - name: Upload coverage results
-    #    uses: actions/upload-artifact@master
+    #    uses: actions/upload-artifact@main
     #    if: always()
     #    with:
     #      name: coverage-report
