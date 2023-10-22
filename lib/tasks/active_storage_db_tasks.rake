@@ -20,7 +20,7 @@ namespace :asdb do
   desc 'ActiveStorageDB: list attachments ordered by blob id desc'
   task list: [:environment] do |_t, _args|
     query = ::ActiveStorage::Blob.order(id: :desc).limit(100)
-    digits = Math.log(query.maximum(:id), 10).to_i + 1
+    digits = query.ids.inject(0) { |ret, id| size = id.to_s.size; [size, ret].max }
 
     ::ActiveStorage::Tasks.print_blob_header(digits: digits)
     query.each do |blob|
@@ -52,7 +52,7 @@ namespace :asdb do
 
     blobs = ::ActiveStorage::Blob.where('filename LIKE ?', "%#{filename}%").order(id: :desc)
     if blobs.any?
-      digits = Math.log(blobs.first.id, 10).to_i + 1
+      digits = blobs.ids.inject(0) { |ret, id| size = id.to_s.size; [size, ret].max }
       ::ActiveStorage::Tasks.print_blob_header(digits: digits)
       blobs.each do |blob|
         ::ActiveStorage::Tasks.print_blob(blob, digits: digits)
