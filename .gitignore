@@ -1,3 +1,5 @@
+.tool-versions
+
 .bundle/
 log/*.log
 pkg/

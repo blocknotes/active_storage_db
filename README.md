@@ -11,9 +11,9 @@
 An Active Storage service upload/download plugin that stores files in a PostgreSQL or MySQL database.
 
 Main features:
-- supports Rails _6.0_, _6.1_ and _7.0_;
+- attachment data stored in a binary field (or blob);
 - all service methods implemented;
-- attachment data stored in a binary field (or blob).
+- supports Rails _6_ and _7_.
 
 Useful also with platforms like Heroku (due to their ephemeral file system).
 
