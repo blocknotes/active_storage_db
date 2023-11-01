@@ -11,6 +11,7 @@ x-defaults:
       MYSQL_DB_NAME: test_db
       MYSQL_DB_USERNAME: root
       MYSQL_DB_PASSWORD: password
+      RAILS: '7.0'
       RAILS_ENV: test
     command:
       - sh
@@ -19,7 +20,7 @@ x-defaults:
         while ! nc -z $${DB_TEST} $${DB_PORT} </dev/null
         do echo "Waiting for DB ($${DB_TEST})..." && sleep 5; done
         echo "DB is now available!"
-        cd spec/dummy
+        cd spec/dummy70
         bin/setup
         cd ../..
         bin/rspec
@@ -37,6 +38,7 @@ x-defaults:
       PG_DB_NAME: test_db
       PG_DB_USERNAME: postgres
       PG_DB_PASSWORD: password
+      RAILS: '7.0'
       RAILS_ENV: test
     command:
       - sh
@@ -45,7 +47,7 @@ x-defaults:
         while ! nc -z $${DB_TEST} $${DB_PORT} </dev/null
         do echo "Waiting for DB ($${DB_TEST})..." && sleep 5; done
         echo "DB is now available!"
-        cd spec/dummy
+        cd spec/dummy70
         bin/setup
         cd ../..
         bin/rspec
@@ -66,38 +68,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: password
 
-  tests_26_mysql:
-    <<: *tests_mysql
-    build:
-      context: ..
-      dockerfile: extra/Dockerfile_26
-      args:
-        DB_TEST: mysql
-
-  tests_26_postgres:
-    <<: *tests_postgres
-    build:
-      context: ..
-      dockerfile: extra/Dockerfile_26
-      args:
-        DB_TEST: postgres
-
-  tests_27_mysql:
-    <<: *tests_mysql
-    build:
-      context: ..
-      dockerfile: extra/Dockerfile_27
-      args:
-        DB_TEST: mysql
-
-  tests_27_postgres:
-    <<: *tests_postgres
-    build:
-      context: ..
-      dockerfile: extra/Dockerfile_27
-      args:
-        DB_TEST: postgres
-
   tests_30_mysql:
     <<: *tests_mysql
     build:
@@ -111,5 +81,21 @@ services:
     build:
       context: ..
       dockerfile: extra/Dockerfile_30
+      args:
+        DB_TEST: postgres
+
+  tests_32_mysql:
+    <<: *tests_mysql
+    build:
+      context: ..
+      dockerfile: extra/Dockerfile_32
+      args:
+        DB_TEST: mysql
+
+  tests_32_postgres:
+    <<: *tests_postgres
+    build:
+      context: ..
+      dockerfile: extra/Dockerfile_32
       args:
         DB_TEST: postgres

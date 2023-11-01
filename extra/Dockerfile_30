@@ -1,8 +1,9 @@
-FROM ruby:3.0-alpine
+FROM ruby:3.0-slim
 
 ARG DB_TEST
 
-RUN apk add --no-cache --update build-base dpkg gcompat mysql-dev postgresql-dev tzdata
+RUN apt-get update
+RUN apt-get install --no-install-recommends -y build-essential curl file git nano netcat libmariadb-dev libpq-dev openssl tzdata
 
 # App setup
 WORKDIR /usr/src/app
