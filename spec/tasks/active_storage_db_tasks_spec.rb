@@ -6,16 +6,12 @@ RSpec.describe 'ActiveStorageDB tasks' do
   describe 'asdb:list' do
     subject(:task) { execute_task('asdb:list') }
 
-    let(:file1) { create(:active_storage_blob, filename: 'some file 1', created_at: Time.now - 1.hour) }
-    let(:file2) { create(:active_storage_blob, filename: 'some file 2', created_at: Time.now - 5.hour) }
-    let(:file3) { create(:active_storage_blob, filename: 'some file 3', created_at: Time.now - 3.hour) }
-
-    before do
-      [file1, file2, file3]
-    end
+    let!(:first_file) { create(:active_storage_blob, filename: 'some file 1', created_at: Time.now - 1.hour) }
+    let!(:second_file) { create(:active_storage_blob, filename: 'some file 2', created_at: Time.now - 5.hour) }
+    let!(:third_file) { create(:active_storage_blob, filename: 'some file 3', created_at: Time.now - 3.hour) }
 
     it 'prints the columns header + the list of 3 files', :aggregate_failures do
-      pattern = /#{file3.id}  #{file3.filename}.+#{file2.id}  #{file2.filename}.+#{file1.id}  #{file1.filename}/m
+      pattern = /#{third_file.id}  #{third_file.filename}.+#{second_file.id}  #{second_file.filename}.+#{first_file.id}  #{first_file.filename}/m
       expect(task).to match pattern
       expect(task.split("\n").size).to be 4
     end

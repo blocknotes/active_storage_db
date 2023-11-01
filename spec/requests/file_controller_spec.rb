@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe 'File controller', type: :request do
+RSpec.describe 'File controller' do
   def create_blob(data: 'Hello world!', filename: 'hello.txt', content_type: 'text/plain', identify: true, record: nil)
     ActiveStorage::Blob.create_and_upload!(
       io: StringIO.new(data),

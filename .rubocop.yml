@@ -22,8 +22,7 @@ Lint/UnusedMethodArgument:
   AllowUnusedKeywordArguments: true
 
 RSpec/DescribeClass:
-  Exclude:
-    - spec/tasks/active_storage_db_tasks_spec.rb
+  Enabled: false
 
 RSpec/ExampleLength:
   # Default is 5

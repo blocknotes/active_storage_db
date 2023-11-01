@@ -52,14 +52,14 @@ RSpec.describe ActiveStorage::Service::DBService do
     describe '.compose' do
       subject(:compose) { service.compose(%w[key1 key2 key3], 'dest_key') }
 
-      let!(:db_file1) { create(:active_storage_db_file, ref: 'key1', data: 'first file') }
-      let!(:db_file2) { create(:active_storage_db_file, ref: 'key2', data: 'second file') }
-      let!(:db_file3) { create(:active_storage_db_file, ref: 'key3', data: 'third file') }
+      let!(:first_db_file) { create(:active_storage_db_file, ref: 'key1', data: 'first file') }
+      let!(:second_db_file) { create(:active_storage_db_file, ref: 'key2', data: 'second file') }
+      let!(:third_db_file) { create(:active_storage_db_file, ref: 'key3', data: 'third file') }
 
       it 'composes the source files' do
         expect { compose }.to change { ActiveStorageDB::File.where(ref: 'dest_key').count }.by(1)
         expect(compose).to be_a ActiveStorageDB::File
-        expect(compose.data).to eq [db_file1.data, db_file2.data, db_file3.data].join
+        expect(compose.data).to eq [first_db_file.data, second_db_file.data, third_db_file.data].join
       end
     end
   end
@@ -70,7 +70,7 @@ RSpec.describe ActiveStorage::Service::DBService do
     before { upload }
 
     it 'deletes the file' do
-      expect { delete }.to change { ActiveStorageDB::File.count }.from(1).to(0)
+      expect { delete }.to change(ActiveStorageDB::File, :count).from(1).to(0)
     end
   end
 
@@ -80,7 +80,7 @@ RSpec.describe ActiveStorage::Service::DBService do
     before { upload }
 
     it 'deletes the files' do
-      expect { delete_prefixed }.to change { ActiveStorageDB::File.count }.from(1).to(0)
+      expect { delete_prefixed }.to change(ActiveStorageDB::File, :count).from(1).to(0)
     end
   end
 

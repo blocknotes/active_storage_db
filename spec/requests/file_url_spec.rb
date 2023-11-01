@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe 'File URL', type: :request do
+RSpec.describe 'File URL' do
   let(:app_url_helpers) { Rails.application.routes.url_helpers }
   let(:engine_url_helpers) { ActiveStorageDB::Engine.routes.url_helpers }
 
