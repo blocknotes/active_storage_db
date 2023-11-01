@@ -20,7 +20,7 @@ SimpleCov.start :rails do
   add_filter %r{^/spec/}
   add_filter %r{^/vendor/}
 
-  case ENV['RAILS']
+  case ENV.fetch('RAILS', nil)
   when '6.0' then add_filter /_rails61|_rails70/
   when '6.1' then add_filter /_rails60|_rails70/
   when '7.0' then add_filter /_rails60|_rails61/
@@ -49,7 +49,7 @@ Dir[support_files].sort.each { |f| require f }
 
 RSpec.configure do |config|
   config.filter_rails_from_backtrace!
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  config.fixture_path = "#{Rails.root}/spec/fixtures"
   config.infer_spec_type_from_file_location!
   config.use_transactional_fixtures = true
 

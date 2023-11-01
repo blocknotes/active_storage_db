@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe 'File controller', type: :request do
+RSpec.describe 'File controller' do
   def create_blob(data: 'Hello world!', filename: 'hello.txt', content_type: 'text/plain', identify: true, record: nil)
     ActiveStorage::Blob.create_and_upload!(
       io: StringIO.new(data),
@@ -29,7 +29,7 @@ RSpec.describe 'File controller', type: :request do
     }
   end
   let(:host) { "#{url_options[:protocol]}#{url_options[:host]}:#{url_options[:port]}" }
-  let(:engine_url_helpers) { ::ActiveStorageDB::Engine.routes.url_helpers }
+  let(:engine_url_helpers) { ActiveStorageDB::Engine.routes.url_helpers }
 
   before do
     if ActiveStorage::Current.respond_to? :url_options
@@ -142,7 +142,7 @@ RSpec.describe 'File controller', type: :request do
       let(:invalid_file) { create(:active_storage_db_file, data: 'Some other data') }
 
       before do
-        allow(::ActiveStorageDB::File).to receive(:find_by).and_return(invalid_file)
+        allow(ActiveStorageDB::File).to receive(:find_by).and_return(invalid_file)
       end
 
       it 'fails to upload' do

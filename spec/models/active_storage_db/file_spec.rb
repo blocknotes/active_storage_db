@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe ActiveStorageDB::File, type: :model do
+RSpec.describe ActiveStorageDB::File do
   let(:file) { create(:active_storage_db_file, ref: 'just_some_key') }
 
   context 'when creating a file with an already existing key' do
