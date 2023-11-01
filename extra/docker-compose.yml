@@ -2,6 +2,33 @@
 version: "3.3"
 
 x-defaults:
+  tests_mssql: &tests_mssql
+    environment:
+      CI: 1
+      DB_TEST: mssql
+      DB_PORT: 1433
+      MSSQL_DB_HOST: mssql
+      MSSQL_DB_NAME: test_db
+      MSSQL_DB_USERNAME: sa
+      MSSQL_DB_PASSWORD: Pa%%w0rd
+      RAILS: '7.0'
+      RAILS_ENV: test
+    command:
+      - sh
+      - -c
+      - |
+        while ! nc -z $${DB_TEST} $${DB_PORT} </dev/null
+        do echo "Waiting for DB ($${DB_TEST})..." && sleep 5; done
+        echo "DB is now available!"
+        cd spec/dummy70
+        bin/setup
+        cd ../..
+        bin/rspec
+    volumes:
+      - ..:/usr/src/app:delegated
+    depends_on:
+      - mssql
+
   tests_mysql: &tests_mysql
     environment:
       CI: 1
@@ -57,16 +84,23 @@ x-defaults:
       - postgres
 
 services:
-  postgres:
-    image: postgres
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
     environment:
-      POSTGRES_PASSWORD: password
+      ACCEPT_EULA: 'Y'
+      SA_PASSWORD: Pa%%w0rd
 
   mysql:
     image: mysql
     platform: linux/amd64
     environment:
       MYSQL_ROOT_PASSWORD: password
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: password
 
   tests_30_mysql:
     <<: *tests_mysql
@@ -83,6 +117,14 @@ services:
       dockerfile: extra/Dockerfile_30
       args:
         DB_TEST: postgres
+
+  tests_32_mssql:
+    <<: *tests_mssql
+    build:
+      context: ..
+      dockerfile: extra/Dockerfile_32
+      args:
+        DB_TEST: mssql
 
   tests_32_mysql:
     <<: *tests_mysql

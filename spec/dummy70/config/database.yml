@@ -1,5 +1,15 @@
 <% case ENV['DB_TEST']
-when 'mysql' %>
+when 'mssql' %>
+test: &test
+  adapter: sqlserver
+  host: <%= ENV.fetch('MSSQL_DB_HOST') { '127.0.0.1' } %>
+  # port: <%= ENV.fetch('MSSQL_DB_PORT') { 1433 } %>
+  database: <%= ENV.fetch('MSSQL_DB_NAME') { ver = ENV.fetch('RAILS', '').tr('.', ''); "active_storage_db_#{ver}-test" } %>
+  username: <%= ENV.fetch('MSSQL_DB_USERNAME') { '' } %>
+  password: <%= ENV.fetch('MSSQL_DB_PASSWORD') { '' } %>
+  encoding: utf8
+  pool: <%= ENV.fetch('RAILS_MAX_THREADS') { 5 } %>
+<% when 'mysql' %>
 test: &test
   adapter: mysql2
   host: <%= ENV.fetch('MYSQL_DB_HOST') { '127.0.0.1' } %>
