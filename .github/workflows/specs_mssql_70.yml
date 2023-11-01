@@ -1,0 +1,53 @@
+---
+name: Specs Rails 7.0 MSSQL
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        ruby: ['3.0', '3.1', '3.2']
+        gemfile: ['rails_7_0_mssql']
+
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}.gemfile
+      DB_TEST: mssql
+      MSSQL_DB_HOST: 127.0.0.1
+      MSSQL_DB_USERNAME: sa
+      MSSQL_DB_PASSWORD: Pa%%w0rd
+      RAILS: '7.0'
+
+    services:
+      postgres:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: 'Y'
+          SA_PASSWORD: Pa%%w0rd
+        ports:
+          - 1433:1433
+
+    steps:
+      - name: Install FreeTDS
+        run: sudo apt-get install -y freetds-dev freetds-bin
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+
+      - name: Database setup
+        run: bundle exec rails db:create db:migrate
+
+      - name: Run tests
+        run: bundle exec rspec --profile
