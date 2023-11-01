@@ -19,12 +19,12 @@ end
 namespace :asdb do
   desc 'ActiveStorageDB: list attachments ordered by blob id desc'
   task list: [:environment] do |_t, _args|
-    query = ::ActiveStorage::Blob.order(id: :desc).limit(100)
+    query = ActiveStorage::Blob.order(id: :desc).limit(100)
     digits = query.ids.inject(0) { |ret, id| size = id.to_s.size; [size, ret].max }
 
-    ::ActiveStorage::Tasks.print_blob_header(digits: digits)
+    ActiveStorage::Tasks.print_blob_header(digits: digits)
     query.each do |blob|
-      ::ActiveStorage::Tasks.print_blob(blob, digits: digits)
+      ActiveStorage::Tasks.print_blob(blob, digits: digits)
     end
   end
 
@@ -34,7 +34,7 @@ namespace :asdb do
     destination = args[:destination]&.strip || Dir.pwd
     abort('Required arguments: source blob id, destination path') if blob_id.blank? || destination.blank?
 
-    blob = ::ActiveStorage::Blob.find_by(id: blob_id)
+    blob = ActiveStorage::Blob.find_by(id: blob_id)
     abort('Source file not found') unless blob
 
     destination = "#{destination}/#{blob.filename}" if Dir.exist?(destination)
@@ -50,12 +50,12 @@ namespace :asdb do
     filename = args[:filename]&.strip
     abort('Required arguments: filename') if filename.blank?
 
-    blobs = ::ActiveStorage::Blob.where('filename LIKE ?', "%#{filename}%").order(id: :desc)
+    blobs = ActiveStorage::Blob.where('filename LIKE ?', "%#{filename}%").order(id: :desc)
     if blobs.any?
       digits = blobs.ids.inject(0) { |ret, id| size = id.to_s.size; [size, ret].max }
-      ::ActiveStorage::Tasks.print_blob_header(digits: digits)
+      ActiveStorage::Tasks.print_blob_header(digits: digits)
       blobs.each do |blob|
-        ::ActiveStorage::Tasks.print_blob(blob, digits: digits)
+        ActiveStorage::Tasks.print_blob(blob, digits: digits)
       end
     else
       puts 'No results'

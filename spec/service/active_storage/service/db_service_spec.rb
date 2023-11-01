@@ -57,8 +57,8 @@ RSpec.describe ActiveStorage::Service::DBService do
       let!(:db_file3) { create(:active_storage_db_file, ref: 'key3', data: 'third file') }
 
       it 'composes the source files' do
-        expect { compose }.to change { ::ActiveStorageDB::File.where(ref: 'dest_key').count }.by(1)
-        expect(compose).to be_kind_of ::ActiveStorageDB::File
+        expect { compose }.to change { ActiveStorageDB::File.where(ref: 'dest_key').count }.by(1)
+        expect(compose).to be_a ActiveStorageDB::File
         expect(compose.data).to eq [db_file1.data, db_file2.data, db_file3.data].join
       end
     end
@@ -154,7 +154,7 @@ RSpec.describe ActiveStorage::Service::DBService do
 
   describe '.upload' do
     it 'uploads the data' do
-      expect(upload).to be_kind_of ActiveStorageDB::File
+      expect(upload).to be_a ActiveStorageDB::File
     ensure
       service.delete(key)
     end
@@ -163,7 +163,7 @@ RSpec.describe ActiveStorage::Service::DBService do
       let(:upload) { service.upload(key, StringIO.new(fixture_data), checksum: checksum) }
 
       it 'uploads the data' do
-        expect(upload).to be_kind_of ActiveStorageDB::File
+        expect(upload).to be_a ActiveStorageDB::File
       ensure
         service.delete(key)
       end
