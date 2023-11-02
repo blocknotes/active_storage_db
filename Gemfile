@@ -6,8 +6,13 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 gemspec
 
 group :development, :test do
+  if ENV['DB_TEST'] == 'mssql'
+    gem 'activerecord-sqlserver-adapter', '7.0.3.0'
+    gem 'tiny_tds'
+  end
   gem 'mysql2' if ENV['DB_TEST'] == 'mysql'
   gem 'pg' if ['postgres', 'postgresql'].include? ENV['DB_TEST']
+
   gem 'simplecov'
   gem 'simplecov-lcov'
 

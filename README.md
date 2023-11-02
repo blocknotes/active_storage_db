@@ -8,7 +8,7 @@
 [![specs Postgres](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_postgres_71.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_postgres_71.yml)
 [![specs MySQL](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_mysql_71.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_mysql_71.yml)
 
-An Active Storage service upload/download plugin that stores files in a PostgreSQL or MySQL database.
+An Active Storage service upload/download plugin that stores files in a PostgreSQL or MySQL database. Experimental support also for MSSQL.
 
 Main features:
 - attachment data stored in a binary field (or blob);

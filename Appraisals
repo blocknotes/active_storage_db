@@ -29,3 +29,15 @@ appraise 'rails-7_1-mysql' do
   gem 'mysql2'
   gem 'rails', '~> 7.1.0'
 end
+
+appraise 'rails-6_1-mssql' do
+  gem 'activerecord-sqlserver-adapter', '~> 6.1.0'
+  gem 'rails', '~> 6.1.0'
+  gem 'tiny_tds'
+end
+
+appraise 'rails-7_0-mssql' do
+  gem 'activerecord-sqlserver-adapter', '7.0.3.0'
+  gem 'rails', '~> 7.0.0'
+  gem 'tiny_tds'
+end

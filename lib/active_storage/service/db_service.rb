@@ -45,7 +45,10 @@ module ActiveStorage
 
     def download_chunk(key, range)
       instrument :download_chunk, key: key, range: range do
-        record = object_for(key, fields: "SUBSTRING(data FROM #{range.begin + 1} FOR #{range.size}) AS chunk")
+        from = range.begin + 1
+        size = range.size
+        args = adapter_sqlserver? ? "data, #{from}, #{size}" : "data FROM #{from} FOR #{size}"
+        record = object_for(key, fields: "SUBSTRING(#{args}) AS chunk")
         raise(ActiveStorage::FileNotFoundError) unless record
 
         record.chunk
@@ -99,6 +102,10 @@ module ActiveStorage
 
     private
 
+    def adapter_sqlserver?
+      @adapter_sqlserver ||= ActiveStorageDB::File.connection.adapter_name == 'SQLServer'
+    end
+
     def generate_url(key, expires_in:, filename:, content_type:, disposition:)
       content_disposition = content_disposition_with(type: disposition, filename: filename)
       verified_key_with_expiration = ActiveStorage.verifier.generate(
@@ -144,7 +151,8 @@ module ActiveStorage
     end
 
     def stream(key)
-      size = object_for(key, fields: 'OCTET_LENGTH(data) AS size')&.size || raise(ActiveStorage::FileNotFoundError)
+      data_size = adapter_sqlserver? ? 'DATALENGTH(data)' : 'OCTET_LENGTH(data)'
+      size = object_for(key, fields: "#{data_size} AS size")&.size || raise(ActiveStorage::FileNotFoundError)
       (size / @chunk_size.to_f).ceil.times.each do |i|
         range = (i * @chunk_size..((i + 1) * @chunk_size) - 1)
         yield download_chunk(key, range)
