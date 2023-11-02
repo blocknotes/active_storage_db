@@ -8,6 +8,7 @@ module ActiveStorage
   # Wraps a DB table as an Active Storage service. See ActiveStorage::Service
   # for the generic API documentation that applies to all services.
   class Service::DBService < Service
+    # :nocov:
     if Rails::VERSION::MAJOR >= 7
       include ActiveStorage::DBServiceRails70
     elsif Rails::VERSION::MAJOR == 6 && Rails::VERSION::MINOR == 1
@@ -15,6 +16,7 @@ module ActiveStorage
     else
       include ActiveStorage::DBServiceRails60
     end
+    # :nocov:
 
     def initialize(public: false, **)
       @chunk_size = ENV.fetch('ASDB_CHUNK_SIZE') { 1.megabytes }

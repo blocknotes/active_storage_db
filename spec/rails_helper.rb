@@ -16,14 +16,17 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(simplecov_formatt
 
 SimpleCov.start :rails do
   filters.clear
+
+  enable_coverage :branch
+
   add_filter %r{^/lib/active_storage_db/version.rb}
   add_filter %r{^/spec/}
   add_filter %r{^/vendor/}
 
   case ENV.fetch('RAILS', nil)
-  when '6.0' then add_filter /_rails61|_rails70/
-  when '6.1' then add_filter /_rails60|_rails70/
-  when '7.0' then add_filter /_rails60|_rails61/
+  when '6.1' then add_filter /_rails70|_rails71/
+  when '7.0' then add_filter /_rails61|_rails71/
+  when '7.1' then add_filter /_rails61|_rails70/
   end
 end
 
