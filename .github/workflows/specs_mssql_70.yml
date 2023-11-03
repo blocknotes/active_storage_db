@@ -34,8 +34,8 @@ jobs:
           - 1433:1433
 
     steps:
-      - name: Install FreeTDS
-        run: sudo apt-get install -y freetds-dev freetds-bin
+      - name: Install FreeTDS and lib VIPS
+        run: sudo apt-get install -y freetds-dev freetds-bin libvips-dev
 
       - name: Checkout repository
         uses: actions/checkout@v4

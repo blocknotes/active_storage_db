@@ -6,6 +6,7 @@ gem "pg"
 gem "rails", "~> 7.1.0"
 
 group :development, :test do
+  gem "image_processing", ">= 1.2"
   gem "simplecov"
   gem "simplecov-lcov"
   gem "capybara"
