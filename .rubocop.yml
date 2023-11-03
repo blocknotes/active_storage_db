@@ -26,7 +26,7 @@ RSpec/DescribeClass:
 
 RSpec/ExampleLength:
   # Default is 5
-  Max: 10
+  Max: 15
 
 RSpec/MultipleExpectations:
   # Default is 1

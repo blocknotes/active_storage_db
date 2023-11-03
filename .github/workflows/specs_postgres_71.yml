@@ -39,6 +39,9 @@ jobs:
           - 5432:5432
 
     steps:
+      - name: Install lib VIPS
+        run: sudo apt-get install -y libvips-dev
+
       - name: Checkout repository
         uses: actions/checkout@v2
 

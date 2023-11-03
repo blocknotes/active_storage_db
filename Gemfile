@@ -13,6 +13,8 @@ group :development, :test do
   gem 'mysql2' if ENV['DB_TEST'] == 'mysql'
   gem 'pg' if ['postgres', 'postgresql'].include? ENV['DB_TEST']
 
+  gem "image_processing", ">= 1.2"
+
   gem 'simplecov'
   gem 'simplecov-lcov'
 
