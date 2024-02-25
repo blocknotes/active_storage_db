@@ -12,7 +12,7 @@ AllCops:
     - gemfiles/*
     - spec/dummy??/**/*
     - vendor/**/*
-  TargetRubyVersion: 2.7
+  TargetRubyVersion: 3.0
 
 Lint/MissingSuper:
   Exclude:

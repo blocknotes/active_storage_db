@@ -19,6 +19,8 @@ Useful also with platforms like Heroku (due to their ephemeral file system).
 
 ## Installation
 
+_NOTE_: Ruby 2.7 is supported until version 1.3.0
+
 - Setup Active Storage in your Rails application
 - Add to your Gemfile `gem 'active_storage_db'` (and execute: `bundle`)
 - Install the gem migrations: `bin/rails active_storage_db:install:migrations` (and execute: `bin/rails db:migrate`)
