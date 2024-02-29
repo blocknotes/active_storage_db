@@ -27,6 +27,12 @@ DB_TEST=postgres RAILS=7.0 bin/appraisal rails-7_1-postgres rspec
 DB_TEST=postgres RAILS=7.0 bin/appraisal rails-7_0-postgres rails db:drop db:create db:migrate
 ```
 
+```ruby
+# Create a test post in the dummy app
+post = Post.create!(title: "test1")
+post.some_file.attach(io: Rails.root.join("../../README.md").open, filename: "README.md")
+```
+
 ## Tests using Docker
 
 ```sh
