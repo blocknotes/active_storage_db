@@ -46,6 +46,22 @@ RSpec.describe ActiveStorage::Service::DBService do
       url = service.url('some_key', filename: filename, disposition: :inline, content_type: 'text/plain', expires_in: nil)
       expect(url).to match %r{#{host}/active_storage_db/files/}
     end
+
+    context 'without port' do
+      let(:url_options) do
+        {
+          protocol: 'https://',
+          host: 'test.example.com',
+        }
+      end
+
+      it 'returns a public URL' do
+        filename = ActiveStorage::Filename.new('some_filename')
+        service = ActiveStorage::Service.configure(:db, config)
+        url = service.url('some_key', filename: filename, disposition: :inline, content_type: 'text/plain', expires_in: nil)
+        expect(url).to match %r{https://test.example.com/active_storage_db/files/}
+      end
+    end
   end
 
   if Rails::VERSION::MAJOR >= 7
