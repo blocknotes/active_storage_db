@@ -19,9 +19,7 @@ module ActiveStorage
 
     def current_host
       opts = url_options || {}
-      url = "#{opts[:protocol]}#{opts[:host]}"
-      url += ":#{opts[:port]}" if opts[:port]
-      url
+      opts[:port] ? "#{opts[:protocol]}#{opts[:host]}:#{opts[:port]}" : "#{opts[:protocol]}#{opts[:host]}"
     end
 
     def private_url(key, expires_in:, filename:, content_type:, disposition:, **)
