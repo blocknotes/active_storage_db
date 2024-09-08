@@ -29,6 +29,12 @@ test: &test
   encoding: utf8
   min_messages: warning
   pool: <%= ENV.fetch('RAILS_MAX_THREADS') { 5 } %>
+<% when 'sqlite' %>
+test: &test
+  adapter: sqlite3
+  database: db/test.sqlite3
+  encoding: utf8
+  pool: <%= ENV.fetch('RAILS_MAX_THREADS') { 5 } %>
 <% else %>
   <% raise "Invalid or empty env DB_TEST #{ENV['DB_TEST']}" %>
 <% end %>

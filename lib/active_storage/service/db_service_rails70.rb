@@ -9,7 +9,7 @@ module ActiveStorage
         if buffer
           buffer << data
         else
-          buffer = data
+          buffer = +data
         end
       end
       ::ActiveStorageDB::File.create!(ref: destination_key, data: buffer) if buffer
