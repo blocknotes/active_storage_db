@@ -26,10 +26,34 @@ Useful also with platforms like Heroku (due to their ephemeral file system).
 - Change Active Storage service in *config/environments/development.rb* to: `config.active_storage.service = :db`
 - Add to *config/storage.yml*:
 
-```
+```yml
 db:
   service: DB
 ```
+
+If there is a need to support a separate database connection for storing the `ActiveStorageDB` files:
+
+1. Add a separate database configuration for the environment (this one is just an example)
+
+```yml
+attachments:
+  database: attachments
+  pool: 5
+  username: root
+  migrations_paths: config/attachments_migrate
+```
+
+2. Create a separate initializer file in `config/initializera/active_storage_db.rb` to set the database:
+
+```rb
+# app/overrides/models/active_storage_db/application_record_override.rb
+ActiveStorageDB::ApplicationRecord.class_eval do
+  connects_to database: { reading: :attachments, writing: :attachments }
+end
+```
+
+3. Move the `ActiveStorageDB` related migrations to a configured storage migrations path
+4. Create the database and execute the migrations
 
 ## Misc
 
