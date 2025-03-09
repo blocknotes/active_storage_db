@@ -44,9 +44,10 @@ attachments:
   # other connection details ...
 ```
 
-2. Extend the ActiveStorage base record class providing the `connects_to` options, e.g `app/overrides/models/active_storage_db/application_record_override.rb` (or add an initializer for _ActiveStorageDB_):
+2. Extend the ActiveStorage base record class providing the `connects_to` options (updating _config/application.rb_ / using an initializer for _ActiveStorageDB_ / overriding the base model like in the [Rails guide](https://guides.rubyonrails.org/engines.html#overriding-models-and-controllers)):
 
 ```rb
+# e.g. app/overrides/models/active_storage_db/application_record_override.rb
 ActiveStorageDB::ApplicationRecord.class_eval do
   connects_to database: { reading: :attachments, writing: :attachments }
 end
