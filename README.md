@@ -8,7 +8,7 @@
 [![specs Postgres](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_postgres_71.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_postgres_71.yml)
 [![specs MySQL](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_mysql_71.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_mysql_71.yml)
 
-An Active Storage service upload/download plugin that stores files in a PostgreSQL or MySQL database. Experimental support also for MSSQL.
+An Active Storage service upload/download plugin that stores files in a PostgreSQL or MySQL database. Experimental support also for MSSQL and SQLite.
 
 Main features:
 - attachment data stored in a binary field (or blob);
@@ -31,29 +31,29 @@ db:
   service: DB
 ```
 
-If there is a need to support a separate database connection for storing the `ActiveStorageDB` files:
+### Customizations
 
-1. Add a separate database configuration for the environment (this one is just an example)
+To setup a separate database connection for the `ActiveStorageDB` migrations and files data:
+
+1. Add a different database configuration per environment to `config/database.yml`, e.g:
 
 ```yml
 attachments:
   database: attachments
-  pool: 5
-  username: root
   migrations_paths: config/attachments_migrate
+  # other connection details ...
 ```
 
-2. Create a separate initializer file in `config/initializera/active_storage_db.rb` to set the database:
+2. Extend the ActiveStorage base record class providing the `connects_to` options, e.g `app/overrides/models/active_storage_db/application_record_override.rb` (or add an initializer for _ActiveStorageDB_):
 
 ```rb
-# app/overrides/models/active_storage_db/application_record_override.rb
 ActiveStorageDB::ApplicationRecord.class_eval do
   connects_to database: { reading: :attachments, writing: :attachments }
 end
 ```
 
-3. Move the `ActiveStorageDB` related migrations to a configured storage migrations path
-4. Create the database and execute the migrations
+3. Move the _ActiveStorageDB_ migrations to the specified migrations path
+4. Execute the _rails db:migrate_ task
 
 ## Misc
 
@@ -74,9 +74,9 @@ If you use this component just star it. A developer is more motivated to improve
 
 Or consider offering me a coffee, it's a small thing but it is greatly appreciated: [about me](https://www.blocknot.es/about-me).
 
-## Contributors
+## Development
 
-- [Mattia Roccoberton](https://blocknot.es/): author
+- Author: [Mattia Roccoberton](https://blocknot.es/)
 - Inspired by [activestorage-database-service](https://github.com/TitovDigital/activestorage-database-service) project
 
 ## License

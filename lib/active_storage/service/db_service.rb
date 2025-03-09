@@ -47,7 +47,7 @@ module ActiveStorage
       instrument :download_chunk, key: key, range: range do
         from = range.begin + 1
         size = range.size
-        args = adapter_sqlserver? ? "data, #{from}, #{size}" : "data FROM #{from} FOR #{size}"
+        args = adapter_sqlserver? || adapter_sqlite? ? "data, #{from}, #{size}" : "data FROM #{from} FOR #{size}"
         record = object_for(key, fields: "SUBSTRING(#{args}) AS chunk")
         raise(ActiveStorage::FileNotFoundError) unless record
 
@@ -101,6 +101,10 @@ module ActiveStorage
     end
 
     private
+
+    def adapter_sqlite?
+      @adapter_sqlite ||= ActiveStorageDB::File.connection.adapter_name == 'SQLite'
+    end
 
     def adapter_sqlserver?
       @adapter_sqlserver ||= ActiveStorageDB::File.connection.adapter_name == 'SQLServer'
