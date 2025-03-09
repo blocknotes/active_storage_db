@@ -57,6 +57,13 @@ jobs:
       - name: Run tests
         run: bundle exec rspec --profile
 
+      - name: Debug
+        shell: bash
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        run: |
+          echo "$CC_TEST_REPORTER_ID"
+
       - name: Code Climate test coverage
         uses: paambaati/codeclimate-action@v9
         env:
