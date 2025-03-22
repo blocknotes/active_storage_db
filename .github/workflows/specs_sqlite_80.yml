@@ -1,5 +1,5 @@
 ---
-name: Specs Rails 7.1 MySQL
+name: Specs Rails 8.0 SQLite
 
 on:
   pull_request:
@@ -13,30 +13,13 @@ jobs:
 
     strategy:
       matrix:
-        ruby: ['3.0', '3.3']
-        gemfile: ['rails_7_1_mysql']
+        ruby: ['3.2', '3.4']
+        gemfile: ['rails_8_0_sqlite']
 
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}.gemfile
-      DB_TEST: mysql
-      MYSQL_DB_HOST: 127.0.0.1
-      MYSQL_DB_USERNAME: root
-      MYSQL_DB_PASSWORD: root
+      DB_TEST: sqlite
       RAILS: '7.0'
-
-    services:
-      mysql:
-        image: mysql
-        env:
-          MYSQL_USER: root
-          MYSQL_PASSWORD: root
-        # options: >-
-        #   --health-cmd="mysqladmin ping"
-        #   --health-interval 10s
-        #   --health-timeout 5s
-        #   --health-retries 5
-        ports:
-          - 3306:3306
 
     steps:
       - name: Install lib VIPS
@@ -51,11 +34,15 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
 
-      - name: Start database service
-        run: sudo /etc/init.d/mysql start
-
       - name: Database setup
         run: bundle exec rails db:create db:migrate
 
       - name: Run tests
         run: bundle exec rspec --profile
+
+    #  - name: Upload coverage results
+    #    uses: actions/upload-artifact@main
+    #    if: always()
+    #    with:
+    #      name: coverage-report
+    #      path: coverage/index.html
