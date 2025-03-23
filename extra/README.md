@@ -12,19 +12,19 @@ bin/appraisal
 
 ```sh
 # Running tests on Rails 6.1:
-DB_TEST=postgres RAILS=6.1 bin/appraisal rails-6_1-postgres rails db:test:prepare
-DB_TEST=postgres RAILS=6.1 bin/appraisal rails-6_1-postgres rspec
+DB_TEST=postgres bin/appraisal rails-6_1-postgres rails db:test:prepare
+DB_TEST=postgres bin/appraisal rails-6_1-postgres rspec
 
 # Running tests on Rails 7.0:
-DB_TEST=postgres RAILS=7.0 bin/appraisal rails-7_0-postgres rails db:test:prepare
-DB_TEST=postgres RAILS=7.0 bin/appraisal rails-7_0-postgres rspec
+DB_TEST=postgres bin/appraisal rails-7_0-postgres rails db:test:prepare
+DB_TEST=postgres bin/appraisal rails-7_0-postgres rspec
 
 # Running tests on Rails 7.1:
-DB_TEST=postgres RAILS=7.0 bin/appraisal rails-7_1-postgres rails db:test:prepare
-DB_TEST=postgres RAILS=7.0 bin/appraisal rails-7_1-postgres rspec
+DB_TEST=postgres bin/appraisal rails-7_1-postgres rails db:test:prepare
+DB_TEST=postgres bin/appraisal rails-7_1-postgres rspec
 
 # Eventually recreate the DB:
-DB_TEST=postgres RAILS=7.0 bin/appraisal rails-7_0-postgres rails db:drop db:create db:migrate
+DB_TEST=postgres bin/appraisal rails-7_0-postgres rails db:drop db:create db:migrate
 ```
 
 ```ruby

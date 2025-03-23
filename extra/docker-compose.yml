@@ -11,7 +11,6 @@ x-defaults:
       MSSQL_DB_NAME: test_db
       MSSQL_DB_USERNAME: sa
       MSSQL_DB_PASSWORD: Pa%%w0rd
-      RAILS: '7.0'
       RAILS_ENV: test
     command:
       - sh
@@ -38,7 +37,6 @@ x-defaults:
       MYSQL_DB_NAME: test_db
       MYSQL_DB_USERNAME: root
       MYSQL_DB_PASSWORD: password
-      RAILS: '7.0'
       RAILS_ENV: test
     command:
       - sh
@@ -65,7 +63,6 @@ x-defaults:
       PG_DB_NAME: test_db
       PG_DB_USERNAME: postgres
       PG_DB_PASSWORD: password
-      RAILS: '7.0'
       RAILS_ENV: test
     command:
       - sh

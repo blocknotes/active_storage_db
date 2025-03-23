@@ -46,6 +46,7 @@ RSpec.describe 'File controller' do
   describe '.show' do
     it 'returns the blob as inline' do
       blob_url = blob.respond_to?(:url) ? blob.url : blob.service_url
+
       get blob_url
 
       expect(response).to have_http_status(:ok)
@@ -80,9 +81,12 @@ RSpec.describe 'File controller' do
     end
 
     context 'with an invalid key' do
-      it 'returns not found' do
-        get engine_url_helpers.service_path(encoded_key: 'Invalid key', filename: 'hello.txt')
+      it 'returns not found', :aggregate_failures do
+        get blob.respond_to?(:url) ? blob.url : blob.service_url
+        expect(response).to have_http_status(:ok)
 
+        invalid_key = [blob.key, '_'].join
+        get engine_url_helpers.service_path(encoded_key: invalid_key, filename: 'hello.txt')
         expect(response).to have_http_status(:not_found)
       end
     end
@@ -131,9 +135,11 @@ RSpec.describe 'File controller' do
     end
 
     context 'with an invalid token' do
-      it 'returns not found' do
-        put engine_url_helpers.update_service_path(encoded_token: 'Invalid token')
+      it 'returns not found', :aggregate_failures do
+        get blob.respond_to?(:url) ? blob.url : blob.service_url
+        expect(response).to have_http_status(:not_found)
 
+        put engine_url_helpers.update_service_path(encoded_token: 'Invalid token')
         expect(response).to have_http_status(:not_found)
       end
     end

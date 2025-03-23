@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+ENV['RAILS_ENV'] = 'test'
+
 require 'simplecov'
 require 'simplecov-lcov'
 
@@ -22,19 +24,11 @@ SimpleCov.start :rails do
   add_filter %r{^/lib/active_storage_db/version.rb}
   add_filter %r{^/spec/}
   add_filter %r{^/vendor/}
-
-  case ENV.fetch('RAILS', nil)
-  when '6.1' then add_filter /_rails70|_rails71/
-  when '7.0' then add_filter /_rails61|_rails71/
-  when '7.1' then add_filter /_rails61|_rails70/
-  end
 end
 
 require 'spec_helper'
-ENV['RAILS_ENV'] ||= 'test'
 
-app_ver = ENV.fetch('RAILS', '').tr('.', '')
-require File.expand_path("dummy#{app_ver}/config/environment.rb", __dir__)
+require File.expand_path("dummy/config/environment.rb", __dir__)
 
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 require 'rspec/rails'
