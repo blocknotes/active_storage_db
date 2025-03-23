@@ -7,7 +7,6 @@ if ENV['DEVEL'] == '1'
   rails_ver = ENV.fetch('RAILS_VERSION')
   gem 'rails', rails_ver
 
-  gem 'activeadmin', ENV.fetch('ACTIVEADMIN_VERSION')
   gem 'active_storage_db', path: './'
   gem 'appraisal', '~> 2.4'
   gem 'factory_bot_rails', '~> 6.1'

@@ -8,7 +8,8 @@ ENV LANG=C.UTF-8
 ENV RAILS_ENV=development
 
 RUN apt-get update -qq
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -yqq --no-install-recommends build-essential libvips42 libyaml-dev nano
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -yqq --no-install-recommends build-essential nano pkg-config \
+  libmariadb-dev libpq-dev libvips42 libyaml-dev sqlite3
 
 RUN gem install bundler
 RUN echo 'gem: --no-document' > /etc/gemrc
