@@ -19,7 +19,6 @@ jobs:
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}.gemfile
       DB_TEST: sqlite
-      RAILS: '7.0'
 
     steps:
       - name: Install lib VIPS

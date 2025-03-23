@@ -22,7 +22,6 @@ jobs:
       PG_DB_HOST: 127.0.0.1
       PG_DB_USERNAME: postgres
       PG_DB_PASSWORD: postgres
-      RAILS: '6.1'
 
     services:
       postgres:
