@@ -58,16 +58,6 @@ appraise 'rails-8_0-mssql' do
   gem 'tiny_tds'
 end
 
-appraise 'rails-6_1-sqlite' do
-  gem 'sqlite3', '~> 1.4'
-  gem 'rails', '~> 6.1.0'
-end
-
-appraise 'rails-7_1-sqlite' do
-  gem 'sqlite3', '~> 1.4'
-  gem 'rails', '~> 7.1.0'
-end
-
 appraise 'rails-7_2-sqlite' do
   gem 'sqlite3', '~> 1.4'
   gem 'rails', '~> 7.2.0'
