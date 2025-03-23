@@ -4,12 +4,12 @@
 log/*.log
 pkg/
 
-/spec/dummy??/db/*.sqlite3
-/spec/dummy??/db/*.sqlite3-journal
-/spec/dummy??/db/*.sqlite3-*
-/spec/dummy??/log/
-/spec/dummy??/storage/
-/spec/dummy??/tmp/
+/spec/dummy/db/*.sqlite3
+/spec/dummy/db/*.sqlite3-journal
+/spec/dummy/db/*.sqlite3-*
+/spec/dummy/log/
+/spec/dummy/storage/
+/spec/dummy/tmp/
 
 /.rubocop-*
 /coverage/
