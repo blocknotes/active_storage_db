@@ -49,6 +49,10 @@ Style/FrozenStringLiteralComment:
   Exclude:
     - spec/dummy/db/**/schema*.rb
 
+Style/NegatedIfElseCondition:
+  Exclude:
+    - Gemfile
+
 Style/NumericLiterals:
   Exclude:
     - spec/dummy/db/**/schema*.rb
