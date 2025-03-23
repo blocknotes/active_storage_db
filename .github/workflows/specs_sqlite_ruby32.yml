@@ -1,0 +1,40 @@
+---
+name: Specs SQLite Ruby 3.2
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        ruby: ['3.2']
+        gemfile: ['sqlite_ruby32_rails72', 'sqlite_ruby32_rails80']
+
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}.gemfile
+      DB_TEST: sqlite
+
+    steps:
+      - name: Install dependencies
+        run: sudo apt-get install -y freetds-dev freetds-bin libvips-dev
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+
+      - name: Database setup
+        run: bundle exec rails db:create db:migrate
+
+      - name: Run tests
+        run: bundle exec rspec --profile
