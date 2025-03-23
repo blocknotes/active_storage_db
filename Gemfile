@@ -3,7 +3,21 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-gemspec
+if ENV['DEVEL'] == '1'
+  rails_ver = ENV.fetch('RAILS_VERSION')
+  gem 'rails', rails_ver
+
+  gem 'activeadmin', ENV.fetch('ACTIVEADMIN_VERSION')
+  gem 'active_storage_db', path: './'
+  gem 'appraisal', '~> 2.4'
+  gem 'factory_bot_rails', '~> 6.1'
+
+  if rails_ver.start_with?('7.0')
+    gem 'concurrent-ruby', '1.3.4'
+  end
+else
+  gemspec
+end
 
 if ENV['DB_TEST'] == 'mssql'
   gem 'activerecord-sqlserver-adapter', '7.0.3.0'
@@ -11,19 +25,21 @@ if ENV['DB_TEST'] == 'mssql'
 end
 gem 'mysql2' if ENV['DB_TEST'] == 'mysql'
 gem 'pg' if ['postgres', 'postgresql'].include? ENV['DB_TEST']
+gem 'sqlite3' if ENV['DB_TEST'] == 'sqlite'
 
+gem 'bigdecimal'
 gem 'image_processing', '>= 1.2'
-
-gem 'webrick'
-
-gem 'simplecov'
-gem 'simplecov-lcov'
+gem 'mutex_m'
+gem 'puma'
+gem 'sprockets-rails'
 
 # Testing
 gem 'capybara'
 gem 'rspec_junit_formatter'
 gem 'rspec-rails'
 gem 'selenium-webdriver'
+gem 'simplecov'
+gem 'simplecov-lcov'
 
 # Linters
 gem 'brakeman'

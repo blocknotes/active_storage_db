@@ -44,3 +44,11 @@ RSpec/NestedGroups:
 Style/ClassAndModuleChildren:
   Exclude:
     - 'lib/active_storage/service/db_service.rb'
+
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - spec/dummy/db/**/schema*.rb
+
+Style/NumericLiterals:
+  Exclude:
+    - spec/dummy/db/**/schema*.rb

@@ -8,12 +8,10 @@
 [![specs Postgres](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_postgres_71.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_postgres_71.yml)
 [![specs MySQL](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_mysql_71.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_mysql_71.yml)
 
-An Active Storage service upload/download plugin that stores files in a PostgreSQL or MySQL database. Experimental support also for MSSQL and SQLite.
+An Active Storage service upload/download plugin that stores files in a PostgreSQL or MySQL database.
+Experimental support also for MSSQL and SQLite.
 
-Main features:
-- attachment data stored in a binary field (or blob);
-- all service methods implemented;
-- supports Rails _6_ and _7_.
+Attachment data get stored in a binary field (or blob).
 
 Useful also with platforms like Heroku (due to their ephemeral file system).
 
@@ -69,16 +67,17 @@ bin/rails 'asdb:search[some_filename]'
 bin/rails 'asdb:download[123,/tmp]'
 ```
 
+## Development
+
+Project created by [Mattia Roccoberton](http://blocknot.es), thanks also to the good guys that opened issues and pull requests from time to time.
+
+For development information please check [this document](extra/development.md).
+
 ## Do you like it? Star it!
 
 If you use this component just star it. A developer is more motivated to improve a project when there is some interest.
 
 Or consider offering me a coffee, it's a small thing but it is greatly appreciated: [about me](https://www.blocknot.es/about-me).
-
-## Development
-
-- Author: [Mattia Roccoberton](https://blocknot.es/)
-- Inspired by [activestorage-database-service](https://github.com/TitovDigital/activestorage-database-service) project
 
 ## License
 
