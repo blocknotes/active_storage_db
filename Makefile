@@ -31,6 +31,9 @@ specs:
 	docker compose exec app bin/rspec --fail-fast
 
 # Other commands
+appraisal_update:
+	docker compose exec app bin/appraisal update
+
 bundle:
 	docker compose exec app bundle
 
