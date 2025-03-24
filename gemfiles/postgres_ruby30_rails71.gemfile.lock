@@ -127,8 +127,6 @@ GEM
     fasterer (0.11.0)
       ruby_parser (>= 3.19.1)
     ffi (1.17.1)
-    ffi (1.17.1-arm64-darwin)
-    ffi (1.17.1-x86_64-darwin)
     globalid (1.2.1)
       activesupport (>= 6.1)
     i18n (1.14.7)
@@ -326,10 +324,11 @@ GEM
       actionpack (>= 6.1)
       activesupport (>= 6.1)
       sprockets (>= 3.0.0)
-    sqlite3 (2.0.4)
+    sqlite3 (1.7.3)
       mini_portile2 (~> 2.8.0)
-    sqlite3 (2.0.4-arm64-darwin)
-    sqlite3 (2.0.4-x86_64-darwin)
+    sqlite3 (1.7.3-arm64-darwin)
+    sqlite3 (1.7.3-x86_64-darwin)
+    sqlite3 (1.7.3-x86_64-linux)
     stringio (3.1.5)
     thor (1.3.2)
     timeout (0.4.3)
@@ -383,7 +382,7 @@ DEPENDENCIES
   simplecov
   simplecov-lcov
   sprockets-rails
-  sqlite3
+  sqlite3 (~> 1.4)
   tiny_tds
   zeitwerk (~> 2.6.18)
 

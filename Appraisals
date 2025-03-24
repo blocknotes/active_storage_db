@@ -22,12 +22,6 @@ MATRIX = {
   }
 }.freeze
 
-EXCEPTIONS = {
-  ["mysql", "3.0", "7.1"] => ->(ctx) {
-    ctx.gem 'sqlite3', '~> 1.4'
-  }
-}.freeze
-
 ruby_version = ENV["RUBY_VERSION"]&.sub(/\.[^\.]+\z/, '')
 MATRIX.each do |db, versions|
   versions.each do |ruby, rails|
@@ -37,7 +31,8 @@ MATRIX.each do |db, versions|
       appraise "#{db}_ruby#{ruby.delete('.')}_rails#{version.delete('.')}" do
         gem 'pg'
         gem 'rails', "~> #{version}.0"
-        EXCEPTIONS[[db, ruby, version]].call(self) if EXCEPTIONS.include?([db, ruby, version])
+
+        gem 'sqlite3', '~> 1.4' if ruby == "3.0"
       end
     end
   end
