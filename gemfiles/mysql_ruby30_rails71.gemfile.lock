@@ -127,8 +127,6 @@ GEM
     fasterer (0.11.0)
       ruby_parser (>= 3.19.1)
     ffi (1.17.1)
-    ffi (1.17.1-arm64-darwin)
-    ffi (1.17.1-x86_64-darwin)
     globalid (1.2.1)
       activesupport (>= 6.1)
     i18n (1.14.7)

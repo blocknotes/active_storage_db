@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby_ver = ENV.fetch("RUBY_VERSION", "")
-rails_ver = ENV.fetch('RAILS_VERSION', "")
+rails_ver = ENV.fetch("RAILS_VERSION", "")
 
 if ENV['DEVEL'] == '1'
   if !rails_ver.empty?
