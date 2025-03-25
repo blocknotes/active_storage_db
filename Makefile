@@ -1,44 +1,38 @@
+include .env
+
 help:
-	@echo "Main targets: up / down / console / shell"
+	@echo "Main targets: build / up / specs / console / shell"
 
 # Docker commands
+build:
+	@rm -f Gemfile.lock
+	@docker compose build
+
 down:
-	docker compose down
+	@docker compose down
 
-up:
-	docker compose up
-
-attach:
-	docker compose attach app
-
-up_attach:
-	docker compose up -d && docker compose attach app
+up: build
+	@docker compose up
 
 cleanup:
-	docker container rm -f active_storage_db_app && docker image rm -f active_storage_db-app
+	docker compose rm -f
+	docker image rm -f ${COMPOSE_PROJECT_NAME}-app
 
-# Rails specific commands
-db_reset:
-	docker compose exec app bin/rails db_reset
+# App commands
+server: build
+	COMMAND="bin/rails s -b 0.0.0.0 -p 4000" docker compose up
+
+specs: build
+	COMMAND="bin/rspec" docker compose up
+
+appraisal_update: build
+	COMMAND="bin/appraisal update" docker compose up
+
+lint: build
+	COMMAND="bin/rubocop" docker compose up
 
 console:
 	docker compose exec -e "PAGER=more" app bin/rails console
 
-routes:
-	docker compose exec app bin/rails routes
-
-specs:
-	docker compose exec app bin/rspec --fail-fast
-
-# Other commands
-appraisal_update:
-	docker compose exec app bin/appraisal update
-
-bundle:
-	docker compose exec app bundle
-
 shell:
 	docker compose exec -e "PAGER=more" app bash
-
-lint:
-	docker compose exec app bin/rubocop

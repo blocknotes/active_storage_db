@@ -51,7 +51,7 @@ jobs:
           bundler-cache: true
 
       - name: Database setup
-        run: bundle exec rails db:create db:migrate
+        run: bin/rails db:reset db:test:prepare
 
       - name: Run tests
-        run: bundle exec rspec --profile
+        run: bin/rspec --profile

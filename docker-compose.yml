@@ -7,18 +7,15 @@ services:
       args:
         # Debian-based Ruby image:
         RUBY_IMAGE: ruby:${RUBY:-3.2}-slim
+        RAILS_VERSION: ${RAILS:-}
         UID: ${UID}
-    environment:
-      DB_TEST: sqlite
-      RAILS_VERSION: ${RAILS:-}
-    user: "${UID}:${GID}"
+    user: ${UID}:${GID}
     ports:
-      - '3000:3000'
-    working_dir: '/app'
+      - 4000:4000
+    working_dir: /app
     volumes:
-      - '.:/app'
+      - .:/app
+      - /app/spec/dummy/db
     stdin_open: true
     tty: true
-    entrypoint:
-      - /bin/sh
-      - ./extra/entrypoint.sh
+    command: ${COMMAND:-sh}

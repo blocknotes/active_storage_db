@@ -5,20 +5,26 @@ There 3 ways to interact with this project:
 1) Using Docker:
 
 ```sh
-# Run rails server on the dummy app (=> http://localhost:3000 to access to ActiveAdmin):
-make up
+# Run build the dummy app image/container:
+make build
+# Run rails server on the dummy app:
+make server
 # Enter in a Rails console (with the dummy app started):
 make console
 # Enter in a shell (with the dummy app started):
 make shell
-# Run the linter on the project (with the dummy app started):
-make lint
-# Run the test suite (with the dummy app started):
+
+# Run the test suite:
 make specs
+# Run the linter on the project:
+make lint
+
 # Remove container and image:
 make cleanup
-# To try different versions of Ruby/Rails/ActiveAdmin edit docker-compose.yml
 # For more commands please check the Makefile
+
+# To use a different Ruby version:
+RUBY=3.0 make build
 ```
 
 2) Using Appraisal:
@@ -30,7 +36,7 @@ bin/appraisal
 # Run server (or any command):
 bin/appraisal rails s
 # Or with a specific configuration:
-bin/appraisal rails80-activeadmin rails s
+bin/appraisal postgres_ruby32_rails80 rails s
 ```
 
 3) With a local setup:
@@ -44,23 +50,34 @@ bundle update
 bin/rails db:reset
 # Run server (or any command):
 bin/rails s
-# To try different versions of Rails/ActiveAdmin edit extra/dev_setup.sh
+# To try different versions of Rails edit extra/dev_setup.sh
 ```
+
+### Useful commands
 
 Sample code to attach a file:
 
 ```ruby
 # Create a test post in the dummy app
-post = Post.create!(title: "test1")
-post.some_file.attach(io: Rails.root.join("../../README.md").open, filename: "README.md")
+post = Post.last || Post.create!(title: "test1")
+io = Rails.root.join("public/favicon.ico").open
+post.some_file.attach(io:, filename: "favicon.ico")
 ```
 
 ## Releases
 
 ```sh
 # Update lib/active_storage_db/version.rb with the new version
+
 # Update the gemfiles:
-bin/appraisal
+make cleanup
+RUBY=3.0 make appraisal_update
+
+make cleanup
+RUBY=3.2 make appraisal_update
+
+make cleanup
+RUBY=3.4 make appraisal_update
 ```
 
 ## Old dev setup
