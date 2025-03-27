@@ -3,8 +3,8 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby_ver = ENV.fetch("RUBY_VERSION", "")
-rails_ver = ENV.fetch("RAILS_VERSION", "")
+ruby_ver = ENV.fetch('RUBY_VERSION', '')
+rails_ver = ENV.fetch('RAILS_VERSION', '')
 
 if ENV['DEVEL'] == '1'
   if !rails_ver.empty?
@@ -31,7 +31,7 @@ gem 'mysql2'
 gem 'pg'
 
 # DB driver: sqlite
-if !rails_ver.empty? && Gem::Version.new(rails_ver) < Gem::Version.new('7.2')
+if !ruby_ver.empty? && Gem::Version.new(ruby_ver) < Gem::Version.new('3.1')
   gem 'sqlite3', '~> 1.4'
 else
   gem 'sqlite3'

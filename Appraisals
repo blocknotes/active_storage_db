@@ -31,8 +31,6 @@ MATRIX.each do |db, versions|
       appraise "#{db}_ruby#{ruby.delete('.')}_rails#{version.delete('.')}" do
         gem 'pg'
         gem 'rails', "~> #{version}.0"
-
-        gem 'sqlite3', '~> 1.4' if ruby == "3.0"
       end
     end
   end
