@@ -1,15 +1,12 @@
 #!/usr/bin/env ruby
-# This command will automatically be run when you run "rails" with Rails gems
-# installed from the root of your application.
 
-ENV['DB_TEST'] ||= 'postgres'
-ENV['RAILS_ENV'] ||= 'test'
+ENV['DB_TEST'] ||= 'sqlite'
+ENV['RAILS_ENV'] ||= 'development'
 
 ENGINE_ROOT = File.expand_path('..', __dir__)
 ENGINE_PATH = File.expand_path('../lib/active_storage_db/engine', __dir__)
 APP_PATH = File.expand_path("../spec/dummy/config/application", __dir__)
 
-# Set up gems listed in the Gemfile.
 ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', __dir__)
 require 'bundler/setup' if File.exist?(ENV['BUNDLE_GEMFILE'])
 
