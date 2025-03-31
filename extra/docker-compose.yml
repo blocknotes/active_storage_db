@@ -1,0 +1,81 @@
+services:
+  app: &app
+    build:
+      context: ..
+      dockerfile: extra/Dockerfile
+      args:
+        # Debian-based Ruby image:
+        RUBY_IMAGE: ruby:${RUBY:-3.2}-slim
+        RAILS_VERSION: ${RAILS:-}
+        UID: ${UID}
+    user: ${UID}:${GID}
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    working_dir: /app
+    volumes:
+      - ..:/app
+    stdin_open: true
+    tty: true
+    command: ${COMMAND:-extra/init.sh}
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: Pa%%w0rd
+
+  mysql:
+    image: mysql
+    platform: linux/amd64
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+
+  app_with_mysql:
+    <<: *app
+    environment:
+      DB_TEST: mysql
+      DB_PORT: 3306
+      MYSQL_DB_HOST: mysql
+      MYSQL_DB_NAME: test_db
+      MYSQL_DB_USERNAME: root
+      MYSQL_DB_PASSWORD: password
+    depends_on:
+      - mysql
+
+  app_with_mssql:
+    <<: *app
+    environment:
+      DB_TEST: mssql
+      DB_PORT: 1433
+      MSSQL_DB_HOST: mssql
+      MSSQL_DB_NAME: test_db
+      MSSQL_DB_USERNAME: sa
+      MSSQL_DB_PASSWORD: Pa%%w0rd
+    depends_on:
+      - mssql
+
+  app_with_postgres:
+    <<: *app
+    environment:
+      DB_TEST: postgres
+      DB_PORT: 5432
+      PG_DB_HOST: postgres
+      PG_DB_NAME: test_db
+      PG_DB_USERNAME: postgres
+      PG_DB_PASSWORD: password
+    depends_on:
+      - postgres
+
+  app_with_sqlite:
+    <<: *app
+    environment:
+      DB_TEST: sqlite
+    volumes:
+      - ..:/app
+      - /app/spec/dummy/db

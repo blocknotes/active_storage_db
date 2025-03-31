@@ -48,12 +48,12 @@ development:
 test: &test
   <<: *default
   adapter: sqlite3
-  database: db/test.sqlite3
+  database: <%= "db/active_storage_db_#{Rails.version.tr('.', '')}-test.sqlite3" %>
   encoding: utf8
   pool: <%= ENV.fetch('RAILS_MAX_THREADS') { 5 } %>
 development:
   <<: *test
-  database: db/development.sqlite3
+  database: "db/active_storage_db-dev.sqlite3"
   schema_dump: schema_development.rb
 <% else %>
   <% raise "Invalid or empty env DB_TEST #{ENV['DB_TEST']}" %>

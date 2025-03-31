@@ -5,26 +5,26 @@ There 3 ways to interact with this project:
 1) Using Docker:
 
 ```sh
-# Run build the dummy app image/container:
-make build
-# Run rails server on the dummy app:
+# Set the test DB driver (mysql / mssql / postgres / sqlite)
+export DB=sqlite
+# Start the base service (in the test dummy app):
+make up
+# With the base service started, start the Rails server (default port 4000):
 make server
-# Enter in a Rails console (with the dummy app started):
-make console
-# Enter in a shell (with the dummy app started):
+# With the base service started, enter in a shell:
 make shell
 
-# Run the test suite:
+# With the base service started, run the test suite:
 make specs
-# Run the linter on the project:
+# With the base service started, run the linter on the project:
 make lint
 
 # Remove container and image:
 make cleanup
 # For more commands please check the Makefile
 
-# To use a different Ruby version:
-RUBY=3.0 make build
+# To use a different db, Ruby and Rails:
+DB=postgres RUBY=3.4 RAILS=7.2 make up
 ```
 
 2) Using Appraisal:
