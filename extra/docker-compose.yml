@@ -4,9 +4,9 @@ services:
       context: ..
       dockerfile: extra/Dockerfile
       args:
-        # Debian-based Ruby image:
-        RUBY_IMAGE: ruby:${RUBY:-3.2}-slim
+        RUBY_IMAGE: ruby:${RUBY:-3.4}-slim
         RAILS_VERSION: ${RAILS:-}
+        BUNDLER_VERSION: ${BUNDLER_VERSION}
         UID: ${UID}
     user: ${UID}:${GID}
     ports:
