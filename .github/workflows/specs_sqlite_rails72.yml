@@ -1,5 +1,5 @@
 ---
-name: Specs MSSQL Ruby 3.4
+name: Specs SQLite Rails 7.2
 
 on:
   pull_request:
@@ -13,24 +13,11 @@ jobs:
 
     strategy:
       matrix:
-        ruby: ['3.4']
-        gemfile: ['mssql_ruby34_rails80']
+        ruby: ['3.2']
 
     env:
-      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}.gemfile
-      DB_TEST: mssql
-      MSSQL_DB_HOST: 127.0.0.1
-      MSSQL_DB_USERNAME: sa
-      MSSQL_DB_PASSWORD: Pa%%w0rd
-
-    services:
-      postgres:
-        image: mcr.microsoft.com/mssql/server:2022-latest
-        env:
-          ACCEPT_EULA: 'Y'
-          SA_PASSWORD: Pa%%w0rd
-        ports:
-          - 1433:1433
+      DB_TEST: sqlite
+      RAILS_VERSION: 7.2.0
 
     steps:
       - name: Install dependencies

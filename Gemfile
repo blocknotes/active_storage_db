@@ -3,22 +3,20 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby_ver = ENV.fetch('RUBY_VERSION', '')
-rails_ver = ENV.fetch('RAILS_VERSION', '')
-
 if ENV['DEVEL'] == '1'
-  if !rails_ver.empty?
-    gem 'rails', "~> #{rails_ver}"
-  else
-    gem 'rails'
-  end
-
   gem 'active_storage_db', path: './'
-  gem 'appraisal', '~> 2.4'
-  gem 'factory_bot_rails', '~> 6.1'
 else
   gemspec
 end
+
+ruby_ver = ENV.fetch('RUBY_VERSION', '')
+rails_ver = ENV.fetch('RAILS_VERSION', '')
+
+rails = rails_ver.empty? ? ['rails'] : ['rails', "~> #{rails_ver}"]
+gem(*rails)
+
+ruby32 = Gem::Version.new(ruby_ver) >= Gem::Version.new('3.2')
+gem 'zeitwerk', '~> 2.6.18' unless ruby32
 
 # DB driver: mssql
 gem 'activerecord-sqlserver-adapter'
@@ -31,15 +29,9 @@ gem 'mysql2'
 gem 'pg'
 
 # DB driver: sqlite
-if !ruby_ver.empty? && Gem::Version.new(ruby_ver) < Gem::Version.new('3.1')
-  gem 'sqlite3', '~> 1.4'
-else
-  gem 'sqlite3'
-end
-
-if !ruby_ver.empty? && Gem::Version.new(ruby_ver) < Gem::Version.new('3.2')
-  gem 'zeitwerk', '~> 2.6.18'
-end
+rails72 = Gem::Version.new(rails_ver) >= Gem::Version.new('7.2')
+sqlite3 = ruby32 || rails72 ? ['sqlite3'] : ['sqlite3', '~> 1.4']
+gem(*sqlite3)
 
 # NOTE: to avoid error: uninitialized constant ActiveSupport::LoggerThreadSafeLevel::Logger
 gem 'concurrent-ruby', '1.3.4'
@@ -52,6 +44,7 @@ gem 'sprockets-rails'
 
 # Testing
 gem 'capybara'
+gem 'factory_bot_rails'
 gem 'rspec_junit_formatter'
 gem 'rspec-rails'
 gem 'selenium-webdriver'

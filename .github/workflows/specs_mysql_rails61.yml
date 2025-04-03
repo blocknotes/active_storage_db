@@ -1,5 +1,5 @@
 ---
-name: Specs MySQL Ruby 3.2
+name: Specs MySQL Rails 6.1
 
 on:
   pull_request:
@@ -13,15 +13,14 @@ jobs:
 
     strategy:
       matrix:
-        ruby: ['3.2']
-        gemfile: ['mysql_ruby32_rails61', 'mysql_ruby32_rails71', 'mysql_ruby32_rails72', 'mysql_ruby32_rails80']
+        ruby: ['3.0']
 
     env:
-      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}.gemfile
       DB_TEST: mysql
       MYSQL_DB_HOST: 127.0.0.1
       MYSQL_DB_USERNAME: root
       MYSQL_DB_PASSWORD: root
+      RAILS_VERSION: 6.1.0
 
     services:
       mysql:
