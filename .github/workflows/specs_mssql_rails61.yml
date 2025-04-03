@@ -1,5 +1,5 @@
 ---
-name: Specs MySQL Ruby 3.4
+name: Specs MSSQL Rails 6.1
 
 on:
   pull_request:
@@ -13,29 +13,23 @@ jobs:
 
     strategy:
       matrix:
-        ruby: ['3.4']
-        gemfile: ['mysql_ruby34_rails72', 'mysql_ruby34_rails80']
+        ruby: ['3.0']
 
     env:
-      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}.gemfile
-      DB_TEST: mysql
-      MYSQL_DB_HOST: 127.0.0.1
-      MYSQL_DB_USERNAME: root
-      MYSQL_DB_PASSWORD: root
+      DB_TEST: mssql
+      MSSQL_DB_HOST: 127.0.0.1
+      MSSQL_DB_USERNAME: sa
+      MSSQL_DB_PASSWORD: Pa%%w0rd
+      RAILS_VERSION: 6.1.0
 
     services:
-      mysql:
-        image: mysql
+      postgres:
+        image: mcr.microsoft.com/mssql/server:2022-latest
         env:
-          MYSQL_USER: root
-          MYSQL_PASSWORD: root
-        # options: >-
-        #   --health-cmd="mysqladmin ping"
-        #   --health-interval 10s
-        #   --health-timeout 5s
-        #   --health-retries 5
+          ACCEPT_EULA: 'Y'
+          SA_PASSWORD: Pa%%w0rd
         ports:
-          - 3306:3306
+          - 1433:1433
 
     steps:
       - name: Install dependencies
@@ -49,9 +43,6 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-
-      - name: Start database service
-        run: sudo /etc/init.d/mysql start
 
       - name: Database setup
         run: bin/rails db:reset db:test:prepare

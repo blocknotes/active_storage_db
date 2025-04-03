@@ -1,5 +1,5 @@
 ---
-name: Specs SQLite Ruby 3.2
+name: Specs Postgres Rails 6.1
 
 on:
   pull_request:
@@ -13,12 +13,28 @@ jobs:
 
     strategy:
       matrix:
-        ruby: ['3.2']
-        gemfile: ['sqlite_ruby32_rails72', 'sqlite_ruby32_rails80']
+        ruby: ['3.0']
 
     env:
-      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}.gemfile
-      DB_TEST: sqlite
+      DB_TEST: postgres
+      PG_DB_HOST: 127.0.0.1
+      PG_DB_USERNAME: postgres
+      PG_DB_PASSWORD: postgres
+      RAILS_VERSION: 6.1.0
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
 
     steps:
       - name: Install dependencies

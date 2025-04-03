@@ -1,5 +1,5 @@
 ---
-name: Specs SQLite Ruby 3.4
+name: Specs MySQL Rails 7.2
 
 on:
   pull_request:
@@ -13,12 +13,28 @@ jobs:
 
     strategy:
       matrix:
-        ruby: ['3.4']
-        gemfile: ['sqlite_ruby34_rails72', 'sqlite_ruby34_rails80']
+        ruby: ['3.2', '3.4']
 
     env:
-      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}.gemfile
-      DB_TEST: sqlite
+      DB_TEST: mysql
+      MYSQL_DB_HOST: 127.0.0.1
+      MYSQL_DB_USERNAME: root
+      MYSQL_DB_PASSWORD: root
+      RAILS_VERSION: 7.2.0
+
+    services:
+      mysql:
+        image: mysql
+        env:
+          MYSQL_USER: root
+          MYSQL_PASSWORD: root
+        # options: >-
+        #   --health-cmd="mysqladmin ping"
+        #   --health-interval 10s
+        #   --health-timeout 5s
+        #   --health-retries 5
+        ports:
+          - 3306:3306
 
     steps:
       - name: Install dependencies
@@ -32,6 +48,9 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
+
+      - name: Start database service
+        run: sudo /etc/init.d/mysql start
 
       - name: Database setup
         run: bin/rails db:reset db:test:prepare

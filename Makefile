@@ -16,6 +16,9 @@ shell:
 specs:
 	@docker compose -f extra/docker-compose.yml exec app_with_${DB} bin/rspec --fail-fast
 
+console:
+	@docker compose -f extra/docker-compose.yml exec app_with_${DB} bin/rails c
+
 server:
 	@docker compose -f extra/docker-compose.yml exec app_with_${DB} bin/rails s -b 0.0.0.0 -p ${SERVER_PORT}
 
