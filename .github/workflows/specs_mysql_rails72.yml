@@ -20,7 +20,7 @@ jobs:
       MYSQL_DB_HOST: 127.0.0.1
       MYSQL_DB_USERNAME: root
       MYSQL_DB_PASSWORD: root
-      RAILS_VERSION: 7.2.0
+      RAILS_VERSION: 7.2
 
     services:
       mysql:
@@ -38,7 +38,7 @@ jobs:
 
     steps:
       - name: Install dependencies
-        run: sudo apt-get install -y freetds-dev freetds-bin libvips-dev
+        run: sudo apt-get update -qq && sudo apt-get install -yqq freetds-dev freetds-bin libvips-dev
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -53,7 +53,7 @@ jobs:
         run: sudo /etc/init.d/mysql start
 
       - name: Database setup
-        run: bin/rails db:reset db:test:prepare
+        run: bin/rails db:create db:migrate db:test:prepare
 
       - name: Run tests
         run: bin/rspec --profile
