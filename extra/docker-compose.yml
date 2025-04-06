@@ -16,7 +16,6 @@ services:
       - ..:/app
     stdin_open: true
     tty: true
-    command: ${COMMAND:-extra/init.sh}
 
   mssql:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -72,10 +71,7 @@ services:
     depends_on:
       - postgres
 
-  app_with_sqlite:
+  app_with_sqlite: &fallback_app
     <<: *app
     environment:
       DB_TEST: sqlite
-    volumes:
-      - ..:/app
-      - /app/spec/dummy/db

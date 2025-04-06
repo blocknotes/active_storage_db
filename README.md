@@ -5,8 +5,8 @@
 [![maintainability](https://api.codeclimate.com/v1/badges/92e1e703c308744a0f66/maintainability)](https://codeclimate.com/github/blocknotes/active_storage_db/maintainability)
 
 [![linters](https://github.com/blocknotes/active_storage_db/actions/workflows/linters.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/linters.yml)
-[![Specs Postgres Ruby 3.4](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_postgres_ruby34.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_postgres_ruby34.yml)
-[![Specs MySQL Ruby 3.4](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_mysql_ruby34.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_mysql_ruby34.yml)
+[![Specs Postgres Rails 8.0](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_postgres_rails80.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_postgres_rails80.yml)
+[![Specs MySQL Rails 8.0](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_mysql_rails80.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_mysql_rails80.yml)
 
 An Active Storage service upload/download plugin that stores files in a PostgreSQL or MySQL database.
 Experimental support also for MSSQL and SQLite.

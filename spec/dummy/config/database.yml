@@ -1,5 +1,5 @@
 default: &default
-  migrations_paths: spec/dummy/db_migrate
+  encoding: utf8
 
 <% case ENV['DB_TEST']
 when 'mssql' %>
@@ -8,53 +8,53 @@ test: &test
   adapter: sqlserver
   host: <%= ENV.fetch('MSSQL_DB_HOST') { '127.0.0.1' } %>
   # port: <%= ENV.fetch('MSSQL_DB_PORT') { 1433 } %>
-  database: <%= ENV.fetch('MSSQL_DB_NAME') { ver = Rails.version.tr('.', ''); "active_storage_db_#{ver}-test" } %>
+  database: <%= ENV.fetch('MSSQL_DB_NAME') { "active_storage_db_#{Rails.version.tr('.', '')}-test" } %>
   username: <%= ENV.fetch('MSSQL_DB_USERNAME') { '' } %>
   password: <%= ENV.fetch('MSSQL_DB_PASSWORD') { '' } %>
-  encoding: utf8
   pool: <%= ENV.fetch('RAILS_MAX_THREADS') { 5 } %>
 development:
   <<: *test
-  database: "active_storage_db-dev"
+  database: <%= "active_storage_db_#{Rails.version.tr('.', '')}-dev" %>
+  schema_dump: schema-dev-mssql.rb
+
 <% when 'mysql' %>
 test: &test
   <<: *default
   adapter: mysql2
   host: <%= ENV.fetch('MYSQL_DB_HOST') { '127.0.0.1' } %>
   # port: <%= ENV.fetch('MYSQL_DB_PORT') { 3306 } %>
-  database: <%= ENV.fetch('MYSQL_DB_NAME') { ver = Rails.version.tr('.', ''); "active_storage_db_#{ver}-test" } %>
+  database: <%= ENV.fetch('MYSQL_DB_NAME') { "active_storage_db_#{Rails.version.tr('.', '')}-test" } %>
   username: <%= ENV.fetch('MYSQL_DB_USERNAME') { '' } %>
   password: <%= ENV.fetch('MYSQL_DB_PASSWORD') { '' } %>
-  encoding: utf8
   pool: <%= ENV.fetch('RAILS_MAX_THREADS') { 5 } %>
 development:
   <<: *test
-  database: "active_storage_db-dev"
+  database: <%= "active_storage_db_#{Rails.version.tr('.', '')}-dev" %>
+  schema_dump: schema-dev-mysql.rb
+
 <% when 'postgres', 'postgresql' %>
 test: &test
   <<: *default
   adapter: postgresql
   host: <%= ENV.fetch('PG_DB_HOST') { '127.0.0.1' } %>
-  database: <%= ENV.fetch('PG_DB_NAME') { ver = Rails.version.tr('.', ''); "active_storage_db_#{ver}-test" } %>
+  database: <%= ENV.fetch('PG_DB_NAME') { "active_storage_db_#{Rails.version.tr('.', '')}-test" } %>
   username: <%= ENV.fetch('PG_DB_USERNAME') { '' } %>
   password: <%= ENV.fetch('PG_DB_PASSWORD') { '' } %>
-  encoding: utf8
   min_messages: warning
   pool: <%= ENV.fetch('RAILS_MAX_THREADS') { 5 } %>
 development:
   <<: *test
-  database: "active_storage_db-dev"
-<% when 'sqlite' %>
+  database: <%= "active_storage_db_#{Rails.version.tr('.', '')}-dev" %>
+  schema_dump: schema-dev-postgres.rb
+
+<% else %>
 test: &test
   <<: *default
   adapter: sqlite3
   database: <%= "db/active_storage_db_#{Rails.version.tr('.', '')}-test.sqlite3" %>
-  encoding: utf8
   pool: <%= ENV.fetch('RAILS_MAX_THREADS') { 5 } %>
 development:
   <<: *test
-  database: "db/active_storage_db-dev.sqlite3"
-  schema_dump: schema_development.rb
-<% else %>
-  <% raise "Invalid or empty env DB_TEST #{ENV['DB_TEST']}" %>
+  database: <%= "db/active_storage_db_#{Rails.version.tr('.', '')}-dev.sqlite3" %>
+  schema_dump: schema-dev-sqlite.rb
 <% end %>

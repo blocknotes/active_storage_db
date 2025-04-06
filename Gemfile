@@ -12,26 +12,33 @@ end
 ruby_ver = ENV.fetch('RUBY_VERSION', '')
 rails_ver = ENV.fetch('RAILS_VERSION', '')
 
-rails = rails_ver.empty? ? ['rails'] : ['rails', "~> #{rails_ver}"]
+rails =
+  if rails_ver.empty?
+    ['rails']
+  elsif rails_ver.count('.') < 2
+    ['rails', "~> #{rails_ver}"]
+  else
+    ['rails', rails_ver]
+  end
 gem(*rails)
 
-ruby32 = Gem::Version.new(ruby_ver) >= Gem::Version.new('3.2')
+ruby32 = ruby_ver.empty? || Gem::Version.new(ruby_ver) >= Gem::Version.new('3.2')
 gem 'zeitwerk', '~> 2.6.18' unless ruby32
 
-# DB driver: mssql
-gem 'activerecord-sqlserver-adapter'
-gem 'tiny_tds'
-
-# DB driver: mysql
-gem 'mysql2'
-
-# DB driver: postgres
-gem 'pg'
-
-# DB driver: sqlite
-rails72 = Gem::Version.new(rails_ver) >= Gem::Version.new('7.2')
-sqlite3 = ruby32 || rails72 ? ['sqlite3'] : ['sqlite3', '~> 1.4']
-gem(*sqlite3)
+# DB driver
+case ENV.fetch('DB_TEST', nil)
+when 'mssql'
+  gem 'activerecord-sqlserver-adapter'
+  gem 'tiny_tds'
+when 'mysql'
+  gem 'mysql2'
+when 'postgres'
+  gem 'pg'
+else
+  rails72 = rails_ver.empty? || Gem::Version.new(rails_ver) >= Gem::Version.new('7.2')
+  sqlite3 = ruby32 && rails72 ? ['sqlite3'] : ['sqlite3', '~> 1.4']
+  gem(*sqlite3)
+end
 
 # NOTE: to avoid error: uninitialized constant ActiveSupport::LoggerThreadSafeLevel::Logger
 gem 'concurrent-ruby', '1.3.4'
