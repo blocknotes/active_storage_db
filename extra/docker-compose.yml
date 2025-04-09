@@ -28,7 +28,7 @@ services:
     image: mysql
     platform: linux/amd64
     environment:
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
 
   postgres:
     image: postgres
@@ -52,8 +52,6 @@ services:
       DB_PORT: 3306
       MYSQL_DB_HOST: mysql
       MYSQL_DB_NAME: test_db
-      MYSQL_DB_USERNAME: root
-      MYSQL_DB_PASSWORD: password
     depends_on:
       - mysql
 

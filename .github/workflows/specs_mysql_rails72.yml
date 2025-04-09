@@ -17,9 +17,6 @@ jobs:
 
     env:
       DB_TEST: mysql
-      MYSQL_DB_HOST: 127.0.0.1
-      MYSQL_DB_USERNAME: root
-      MYSQL_DB_PASSWORD: root
       RAILS_VERSION: 7.2
 
     services:

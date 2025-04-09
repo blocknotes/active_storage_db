@@ -24,8 +24,8 @@ test: &test
   host: <%= ENV.fetch('MYSQL_DB_HOST') { '127.0.0.1' } %>
   # port: <%= ENV.fetch('MYSQL_DB_PORT') { 3306 } %>
   database: <%= ENV.fetch('MYSQL_DB_NAME') { "active_storage_db_#{Rails.version.tr('.', '')}-test" } %>
-  username: <%= ENV.fetch('MYSQL_DB_USERNAME') { '' } %>
-  password: <%= ENV.fetch('MYSQL_DB_PASSWORD') { '' } %>
+  username: <%= ENV.fetch('MYSQL_DB_USERNAME') { 'root' } %>
+  password: <%= ENV.fetch('MYSQL_DB_PASSWORD') { 'root' } %>
   pool: <%= ENV.fetch('RAILS_MAX_THREADS') { 5 } %>
 development:
   <<: *test
