@@ -20,7 +20,7 @@ jobs:
       MSSQL_DB_HOST: 127.0.0.1
       MSSQL_DB_USERNAME: sa
       MSSQL_DB_PASSWORD: Pa%%w0rd
-      RAILS_VERSION: 8.0.0
+      RAILS_VERSION: 8.0
 
     services:
       postgres:
@@ -33,7 +33,7 @@ jobs:
 
     steps:
       - name: Install dependencies
-        run: sudo apt-get install -y freetds-dev freetds-bin libvips-dev
+        run: sudo apt-get update -qq && sudo apt-get install -yqq freetds-dev freetds-bin libvips-dev
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -45,7 +45,7 @@ jobs:
           bundler-cache: true
 
       - name: Database setup
-        run: bin/rails db:reset db:test:prepare
+        run: bin/rails db:create db:migrate db:test:prepare
 
       - name: Run tests
         run: bin/rspec --profile

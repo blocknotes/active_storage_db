@@ -26,7 +26,4 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'activestorage', '>= 6.0'
   spec.add_dependency 'rails', '>= 6.0'
-
-  spec.add_development_dependency 'appraisal', '~> 2.4' # rubocop:disable Gemspec/DevelopmentDependencies
-  spec.add_development_dependency 'factory_bot_rails', '~> 6.1' # rubocop:disable Gemspec/DevelopmentDependencies
 end

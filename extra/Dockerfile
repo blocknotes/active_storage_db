@@ -18,12 +18,15 @@ RUN useradd -u $UID --shell /bin/bash app
 
 RUN mkdir -p /home/app && chown -R app:app /home/app
 
+ARG DB_TEST
+ENV DB_TEST=$DB_TEST
+
 ARG RAILS_VERSION
 ENV RAILS_VERSION=$RAILS_VERSION
 
 WORKDIR /app
 COPY . /app
 RUN bundle install
-RUN chown -R app:app /app/spec/dummy/db /usr/local/bundle
+RUN chown -R app:app /usr/local/bundle
 
 RUN ln -s /app/extra/.bashrc /home/app/.bashrc
