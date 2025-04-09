@@ -28,24 +28,12 @@ services:
     image: mysql
     platform: linux/amd64
     environment:
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
 
   postgres:
     image: postgres
     environment:
       POSTGRES_PASSWORD: password
-
-  app_with_mysql:
-    <<: *app
-    environment:
-      DB_TEST: mysql
-      DB_PORT: 3306
-      MYSQL_DB_HOST: mysql
-      MYSQL_DB_NAME: test_db
-      MYSQL_DB_USERNAME: root
-      MYSQL_DB_PASSWORD: password
-    depends_on:
-      - mysql
 
   app_with_mssql:
     <<: *app
@@ -54,10 +42,18 @@ services:
       DB_PORT: 1433
       MSSQL_DB_HOST: mssql
       MSSQL_DB_NAME: test_db
-      MSSQL_DB_USERNAME: sa
-      MSSQL_DB_PASSWORD: Pa%%w0rd
     depends_on:
       - mssql
+
+  app_with_mysql:
+    <<: *app
+    environment:
+      DB_TEST: mysql
+      DB_PORT: 3306
+      MYSQL_DB_HOST: mysql
+      MYSQL_DB_NAME: test_db
+    depends_on:
+      - mysql
 
   app_with_postgres:
     <<: *app
@@ -66,8 +62,6 @@ services:
       DB_PORT: 5432
       PG_DB_HOST: postgres
       PG_DB_NAME: test_db
-      PG_DB_USERNAME: postgres
-      PG_DB_PASSWORD: password
     depends_on:
       - postgres
 
