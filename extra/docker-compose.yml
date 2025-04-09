@@ -62,8 +62,6 @@ services:
       DB_PORT: 5432
       PG_DB_HOST: postgres
       PG_DB_NAME: test_db
-      PG_DB_USERNAME: postgres
-      PG_DB_PASSWORD: password
     depends_on:
       - postgres
 

@@ -38,8 +38,8 @@ test: &test
   adapter: postgresql
   host: <%= ENV.fetch('PG_DB_HOST') { '127.0.0.1' } %>
   database: <%= ENV.fetch('PG_DB_NAME') { "active_storage_db_#{Rails.version.tr('.', '')}-test" } %>
-  username: <%= ENV.fetch('PG_DB_USERNAME') { '' } %>
-  password: <%= ENV.fetch('PG_DB_PASSWORD') { '' } %>
+  username: <%= ENV.fetch('PG_DB_USERNAME') { 'postgres' } %>
+  password: <%= ENV.fetch('PG_DB_PASSWORD') { 'password' } %>
   min_messages: warning
   pool: <%= ENV.fetch('RAILS_MAX_THREADS') { 5 } %>
 development:

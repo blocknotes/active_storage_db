@@ -17,9 +17,6 @@ jobs:
 
     env:
       DB_TEST: postgres
-      PG_DB_HOST: 127.0.0.1
-      PG_DB_USERNAME: postgres
-      PG_DB_PASSWORD: postgres
       RAILS_VERSION: 7.2
 
     services:
@@ -27,7 +24,7 @@ jobs:
         image: postgres:latest
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_PASSWORD: password
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
