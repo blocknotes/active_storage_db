@@ -9,8 +9,8 @@ test: &test
   host: <%= ENV.fetch('MSSQL_DB_HOST') { '127.0.0.1' } %>
   # port: <%= ENV.fetch('MSSQL_DB_PORT') { 1433 } %>
   database: <%= ENV.fetch('MSSQL_DB_NAME') { "active_storage_db_#{Rails.version.tr('.', '')}-test" } %>
-  username: <%= ENV.fetch('MSSQL_DB_USERNAME') { '' } %>
-  password: <%= ENV.fetch('MSSQL_DB_PASSWORD') { '' } %>
+  username: <%= ENV.fetch('MSSQL_DB_USERNAME') { 'sa' } %>
+  password: <%= ENV.fetch('MSSQL_DB_PASSWORD') { 'Pa%%w0rd' } %>
   pool: <%= ENV.fetch('RAILS_MAX_THREADS') { 5 } %>
 development:
   <<: *test

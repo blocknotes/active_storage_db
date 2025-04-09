@@ -35,6 +35,16 @@ services:
     environment:
       POSTGRES_PASSWORD: password
 
+  app_with_mssql:
+    <<: *app
+    environment:
+      DB_TEST: mssql
+      DB_PORT: 1433
+      MSSQL_DB_HOST: mssql
+      MSSQL_DB_NAME: test_db
+    depends_on:
+      - mssql
+
   app_with_mysql:
     <<: *app
     environment:
@@ -46,18 +56,6 @@ services:
       MYSQL_DB_PASSWORD: password
     depends_on:
       - mysql
-
-  app_with_mssql:
-    <<: *app
-    environment:
-      DB_TEST: mssql
-      DB_PORT: 1433
-      MSSQL_DB_HOST: mssql
-      MSSQL_DB_NAME: test_db
-      MSSQL_DB_USERNAME: sa
-      MSSQL_DB_PASSWORD: Pa%%w0rd
-    depends_on:
-      - mssql
 
   app_with_postgres:
     <<: *app
