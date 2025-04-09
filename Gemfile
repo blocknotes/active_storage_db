@@ -57,6 +57,7 @@ gem 'rspec-rails'
 gem 'selenium-webdriver'
 gem 'simplecov'
 gem 'simplecov-lcov'
+gem 'testcontainers'
 
 # Linters
 gem 'brakeman'

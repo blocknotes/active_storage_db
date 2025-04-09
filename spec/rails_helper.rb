@@ -49,7 +49,16 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
   config.use_transactional_fixtures = true
 
+  config.add_setting :docker_container, default: nil
+
   config.before(:suite) do
+    ruby_ver = ENV.fetch('RUBY', '3.4')
+
+    config.docker_container = Testcontainers::DockerContainer.new("ruby:#{ruby_ver}-slim")
+    config.docker_container.start
+
+    # !!! Ruby version won't change because we are not running the whole test suite inside the container
+
     db_config =
       if ActiveRecord::Base.respond_to? :connection_db_config
         ActiveRecord::Base.connection_db_config.configuration_hash
@@ -67,5 +76,10 @@ RSpec.configure do |config|
     intro << ('-' * 80)
 
     RSpec.configuration.reporter.message(intro)
+  end
+
+  config.after(:suite) do
+    config.docker_container&.stop
+    config.docker_container&.remove
   end
 end
