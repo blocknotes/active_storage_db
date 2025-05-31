@@ -85,8 +85,16 @@ RSpec.describe ActiveStorage::Service::DBService do
 
     before { upload }
 
+    it { is_expected.to be_truthy }
+
     it 'deletes the file' do
       expect { delete }.to change(ActiveStorageDB::File, :count).from(1).to(0)
+    end
+
+    context "when the attachment is not found" do
+      subject(:delete) { service.delete("#{key}!") }
+
+      it { is_expected.to be_falsey }
     end
   end
 

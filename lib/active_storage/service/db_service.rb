@@ -57,8 +57,10 @@ module ActiveStorage
 
     def delete(key)
       instrument :delete, key: key do
-        ::ActiveStorageDB::File.find_by(ref: key)&.destroy
-        # Ignore files already deleted
+        record = ::ActiveStorageDB::File.find_by(ref: key)
+        record&.destroy
+        # NOTE: Ignore files already deleted
+        !record.nil?
       end
     end
 
