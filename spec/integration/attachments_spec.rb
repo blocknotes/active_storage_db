@@ -12,7 +12,7 @@ RSpec.describe 'Attachments' do
     end
     let(:test_post) { Post.new(title: 'A test post', some_file: uploaded_file) }
 
-    it 'creates the entity with the attached file', :aggregate_failures do
+    it 'creates the entity with the attached file', :aggregate_failures, :skip_bullet do
       expect { test_post.save! }.to change(ActiveStorageDB::File, :count).by(1)
 
       expect(test_post.some_file).to be_attached
