@@ -141,6 +141,15 @@ RSpec.describe ActiveStorage::Service::DBService do
           expect(download_block).to eq fixture_data
         end
       end
+
+      context "with download a block and when the attachment is not found" do
+        let(:download_block) do
+          service.download("#{key}!") do |_data| # rubocop:disable Lint/EmptyBlock
+          end
+        end
+
+        it { expect { download_block }.to raise_exception(ActiveStorage::FileNotFoundError) }
+      end
     end
   end
 
@@ -154,6 +163,12 @@ RSpec.describe ActiveStorage::Service::DBService do
     after { service.delete(key) }
 
     it { is_expected.to eq fixture_data[range] }
+
+    context "when the attachment is not found" do
+      subject(:download_chunk) { service.download_chunk("#{key}!", range) }
+
+      it { expect { download_chunk }.to raise_exception(ActiveStorage::FileNotFoundError) }
+    end
   end
 
   describe '.exist?' do

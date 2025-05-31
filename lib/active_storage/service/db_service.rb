@@ -57,7 +57,8 @@ module ActiveStorage
 
     def delete(key)
       instrument :delete, key: key do
-        record = ::ActiveStorageDB::File.find_by(ref: key)
+        comment = "DBService#delete"
+        record = ::ActiveStorageDB::File.annotate(comment).find_by(ref: key)
         record&.destroy
         # NOTE: Ignore files already deleted
         !record.nil?
@@ -66,15 +67,18 @@ module ActiveStorage
 
     def delete_prefixed(prefix)
       instrument :delete_prefixed, prefix: prefix do
-        ::ActiveStorageDB::File.where('ref LIKE ?', "#{ApplicationRecord.sanitize_sql_like(prefix)}%").destroy_all
+        comment = "DBService#delete_prefixed"
+        sanitized_prefix = "#{ApplicationRecord.sanitize_sql_like(prefix)}%"
+        ::ActiveStorageDB::File.annotate(comment).where('ref LIKE ?', sanitized_prefix).destroy_all
       end
     end
 
     def exist?(key)
       instrument :exist, key: key do |payload|
-        answer = ::ActiveStorageDB::File.where(ref: key).exists?
-        payload[:exist] = answer
-        answer
+        comment = "DBService#exist?"
+        result = ::ActiveStorageDB::File.annotate(comment).where(ref: key).exists?
+        payload[:exist] = result
+        result
       end
     end
 
@@ -152,7 +156,8 @@ module ActiveStorage
     end
 
     def object_for(key, fields: nil)
-      as_file = fields ? ::ActiveStorageDB::File.select(*fields) : ::ActiveStorageDB::File
+      comment = "DBService#object_for"
+      as_file = fields ? ::ActiveStorageDB::File.annotate(comment).select(*fields) : ::ActiveStorageDB::File
       as_file.find_by(ref: key)
     end
 

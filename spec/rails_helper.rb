@@ -37,13 +37,6 @@ require 'factory_bot_rails'
 support_files = File.expand_path('support/**/*.rb', __dir__)
 Dir[support_files].sort.each { |f| require f }
 
-# begin
-#   ActiveRecord::Migration.maintain_test_schema!
-# rescue ActiveRecord::PendingMigrationError => e
-#   puts e.to_s.strip
-#   exit 1
-# end
-
 RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   config.infer_spec_type_from_file_location!
@@ -67,5 +60,16 @@ RSpec.configure do |config|
     intro << ('-' * 80)
 
     RSpec.configuration.reporter.message(intro)
+  end
+
+  config.before do |example|
+    Bullet.start_request unless example.metadata[:skip_bullet]
+  end
+
+  config.after do |example|
+    unless example.metadata[:skip_bullet]
+      Bullet.perform_out_of_channel_notifications if Bullet.notification?
+      Bullet.end_request
+    end
   end
 end
