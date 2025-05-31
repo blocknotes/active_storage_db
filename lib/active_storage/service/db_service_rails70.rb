@@ -4,8 +4,9 @@ module ActiveStorage
   module DBServiceRails70
     def compose(source_keys, destination_key, **)
       buffer = nil
+      comment = "DBService#compose"
       source_keys.each do |source_key|
-        data = ::ActiveStorageDB::File.find_by!(ref: source_key).data
+        data = ::ActiveStorageDB::File.annotate(comment).find_by!(ref: source_key).data
         if buffer
           buffer << data
         else
