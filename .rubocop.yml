@@ -22,6 +22,10 @@ Lint/MissingSuper:
 Lint/UnusedMethodArgument:
   AllowUnusedKeywordArguments: true
 
+Naming/FileName:
+  Exclude:
+    - spec/dummy/db/*
+
 RSpec/DescribeClass:
   Enabled: false
 

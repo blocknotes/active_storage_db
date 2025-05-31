@@ -38,6 +38,9 @@ console:
 lint:
 	@docker compose -f extra/docker-compose.yml exec app_with_${DB} bin/rubocop
 
+seed:
+	@docker compose -f extra/docker-compose.yml exec app_with_${DB} bin/rails db:seed
+
 server:
 	@docker compose -f extra/docker-compose.yml exec app_with_${DB} bin/rails server -b 0.0.0.0 -p ${SERVER_PORT}
 
