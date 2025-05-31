@@ -44,6 +44,7 @@ end
 gem 'concurrent-ruby', '1.3.4'
 
 gem 'bigdecimal'
+gem 'bullet'
 gem 'image_processing', '>= 1.2'
 gem 'mutex_m'
 gem 'puma'
