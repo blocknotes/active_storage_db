@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'active_storage/service/db_service_rails60'
-require 'active_storage/service/db_service_rails61'
-require 'active_storage/service/db_service_rails70'
+require "active_storage/service/db_service_rails60"
+require "active_storage/service/db_service_rails61"
+require "active_storage/service/db_service_rails70"
 
 module ActiveStorage
   # Wraps a DB table as an Active Storage service. See ActiveStorage::Service
@@ -19,7 +19,7 @@ module ActiveStorage
     # :nocov:
 
     def initialize(public: false, **)
-      @chunk_size = ENV.fetch('ASDB_CHUNK_SIZE') { 1.megabytes }
+      @chunk_size = ENV.fetch("ASDB_CHUNK_SIZE") { 1.megabytes }
       @public = public
     end
 
@@ -69,7 +69,7 @@ module ActiveStorage
       instrument :delete_prefixed, prefix: prefix do
         comment = "DBService#delete_prefixed"
         sanitized_prefix = "#{ApplicationRecord.sanitize_sql_like(prefix)}%"
-        ::ActiveStorageDB::File.annotate(comment).where('ref LIKE ?', sanitized_prefix).destroy_all
+        ::ActiveStorageDB::File.annotate(comment).where("ref LIKE ?", sanitized_prefix).destroy_all
       end
     end
 
@@ -90,7 +90,7 @@ module ActiveStorage
             content_type: content_type,
             content_length: content_length,
             checksum: checksum,
-            service_name: respond_to?(:name) ? name : 'db'
+            service_name: respond_to?(:name) ? name : "db"
           },
           expires_in: expires_in,
           purpose: :blob_token
@@ -103,17 +103,25 @@ module ActiveStorage
     end
 
     def headers_for_direct_upload(_key, content_type:, **)
-      { 'Content-Type' => content_type }
+      { "Content-Type" => content_type }
     end
 
     private
 
     def adapter_sqlite?
-      @adapter_sqlite ||= ActiveStorageDB::File.connection.adapter_name == 'SQLite'
+      @adapter_sqlite ||= active_storage_db_adapter_name == "SQLite"
     end
 
     def adapter_sqlserver?
-      @adapter_sqlserver ||= ActiveStorageDB::File.connection.adapter_name == 'SQLServer'
+      @adapter_sqlserver ||= active_storage_db_adapter_name == "SQLServer"
+    end
+
+    def active_storage_db_adapter_name
+      if ActiveStorageDB::File.respond_to?(:lease_connection)
+        ActiveStorageDB::File.lease_connection.adapter_name
+      else
+        ActiveStorageDB::File.connection.adapter_name
+      end
     end
 
     def generate_url(key, expires_in:, filename:, content_type:, disposition:)
@@ -123,7 +131,7 @@ module ActiveStorage
           key: key,
           disposition: content_disposition,
           content_type: content_type,
-          service_name: respond_to?(:name) ? name : 'db'
+          service_name: respond_to?(:name) ? name : "db"
         },
         expires_in: expires_in,
         purpose: :blob_key
@@ -162,7 +170,7 @@ module ActiveStorage
     end
 
     def stream(key)
-      data_size = adapter_sqlserver? ? 'DATALENGTH(data)' : 'OCTET_LENGTH(data)'
+      data_size = adapter_sqlserver? ? "DATALENGTH(data)" : "OCTET_LENGTH(data)"
       size = object_for(key, fields: "#{data_size} AS size")&.size || raise(ActiveStorage::FileNotFoundError)
       (size / @chunk_size.to_f).ceil.times.each do |i|
         range = (i * @chunk_size..((i + 1) * @chunk_size) - 1)
