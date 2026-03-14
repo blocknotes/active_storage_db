@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ApplicationRecord < ActiveRecord::Base
-  if Gem::Version.new(Rails.version) >= Gem::Version.new('7.0')
+  if Rails::VERSION::MAJOR >= 7
     primary_abstract_class
   else
     self.abstract_class = true
