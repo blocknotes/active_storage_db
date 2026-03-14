@@ -9,15 +9,19 @@ require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
   config.after_initialize do
-    Bullet.enable        = true
+    Bullet.enable = true
     Bullet.bullet_logger = true
-    Bullet.raise         = true # raise an error if n+1 query occurs
+    Bullet.raise = true # raise an error if n+1 query occurs
   end
 
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Turn false under Spring and add config.action_view.cache_template_loading = true.
-  config.cache_classes = true
+  if config.respond_to?(:enable_reloading)
+    config.enable_reloading = false
+  else
+    config.cache_classes = true
+  end
 
   # Eager loading loads your whole application. When running a single test locally,
   # this probably isn't necessary. It's a good idea to do in a continuous integration
@@ -31,12 +35,12 @@ Rails.application.configure do
   }
 
   # Show full error reports and disable caching.
-  config.consider_all_requests_local       = true
+  config.consider_all_requests_local = true
   config.action_controller.perform_caching = false
   config.cache_store = :null_store
 
   # Raise exceptions instead of rendering exception templates.
-  config.action_dispatch.show_exceptions = false
+  config.action_dispatch.show_exceptions = Rails::VERSION::MAJOR >= 7 ? :none : false
 
   # Disable request forgery protection in test environment.
   config.action_controller.allow_forgery_protection = false
