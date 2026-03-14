@@ -19,7 +19,7 @@ module ActiveStorage
     # :nocov:
 
     def initialize(public: false, **)
-      @chunk_size = ENV.fetch("ASDB_CHUNK_SIZE") { 1.megabytes }
+      @chunk_size = ENV.fetch("ASDB_CHUNK_SIZE") { 1.megabytes }.to_i
       @public = public
     end
 
