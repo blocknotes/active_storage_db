@@ -1,0 +1,39 @@
+---
+name: Specs SQLite Rails 8.1
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        ruby: ['3.2', '3.3', '3.4']
+
+    env:
+      DB_TEST: sqlite
+      RAILS_VERSION: 8.1
+
+    steps:
+      - name: Install dependencies
+        run: sudo apt-get update -qq && sudo apt-get install -yqq freetds-dev freetds-bin libvips-dev
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+
+      - name: Database setup
+        run: bin/rails db:create db:migrate db:test:prepare
+
+      - name: Run tests
+        run: bin/rspec --profile
