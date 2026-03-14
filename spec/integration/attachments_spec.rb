@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-RSpec.describe 'Attachments' do
-  context 'with a new target entity' do
-    let(:filename) { 'file1.txt' }
+RSpec.describe "Attachments" do
+  context "with a new target entity" do
+    let(:filename) { "file1.txt" }
     let(:uploaded_file) do
       ActionDispatch::Http::UploadedFile.new(
         tempfile: file_fixture(filename),
         filename: filename,
-        content_type: 'text/plain'
+        content_type: "text/plain"
       )
     end
-    let(:test_post) { Post.new(title: 'A test post', some_file: uploaded_file) }
+    let(:test_post) { Post.new(title: "A test post", some_file: uploaded_file) }
 
     around do |example|
       # NOTE: touch_attachment_records trigger an extra includes on ActiveStorage::Attachment
@@ -22,7 +22,7 @@ RSpec.describe 'Attachments' do
       end
     end
 
-    it 'creates the entity with the attached file', :aggregate_failures do
+    it "creates the entity with the attached file", :aggregate_failures do
       expect { test_post.save! }.to change(ActiveStorageDB::File, :count).by(1)
 
       expect(test_post.some_file).to be_attached
@@ -30,12 +30,12 @@ RSpec.describe 'Attachments' do
     end
   end
 
-  context 'with an existing target entity' do
-    let(:filename) { 'file3.png' }
+  context "with an existing target entity" do
+    let(:filename) { "file3.png" }
 
-    let!(:test_post) { Post.create!(title: 'A test post') }
+    let!(:test_post) { Post.create!(title: "A test post") }
 
-    it 'attaches the file to the target entity', :aggregate_failures do
+    it "attaches the file to the target entity", :aggregate_failures do
       expect {
         test_post.some_file.attach(io: file_fixture(filename).open, filename: filename)
       }.to change(ActiveStorageDB::File, :count).from(0).to(1)
@@ -49,11 +49,24 @@ RSpec.describe 'Attachments' do
       expect(test_post.some_file.download).to eq file_fixture(filename).binread
 
       blob_path = Rails.application.routes.url_helpers.rails_blob_path(test_post.some_file, only_path: true)
-      expect(blob_path).to match %r[/rails/active_storage/.+#{filename}]
+      expect(blob_path).to match %r{/rails/active_storage/.+#{filename}}
 
       expect {
         test_post.some_file.purge
       }.to change(ActiveStorageDB::File, :count).by(-1)
+    end
+
+    it "replaces an existing attachment", :aggregate_failures, :skip_bullet do
+      test_post.some_file.attach(io: file_fixture(filename).open, filename: filename)
+      expect(test_post.some_file).to be_attached
+
+      replacement = "file1.txt"
+      test_post.some_file.attach(io: file_fixture(replacement).open, filename: replacement)
+      test_post.reload
+
+      expect(test_post.some_file).to be_attached
+      expect(test_post.some_file.filename.to_s).to eq replacement
+      expect(test_post.some_file.download).to eq file_fixture(replacement).read
     end
   end
 end
