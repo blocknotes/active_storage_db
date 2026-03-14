@@ -17,12 +17,12 @@ module ActiveStorageDB
     def update
       if (token = decode_verified_token)
         file_uploaded = upload_file(token, body: request.body)
-        head(file_uploaded ? :no_content : :unprocessable_entity)
+        head(file_uploaded ? :no_content : unprocessable)
       else
         head(:not_found)
       end
     rescue ActiveStorage::IntegrityError
-      head(:unprocessable_entity)
+      head(unprocessable)
     end
 
     private
@@ -58,6 +58,10 @@ module ActiveStorageDB
 
       db_service.upload(token[:key], request.body, checksum: token[:checksum])
       true
+    end
+
+    def unprocessable
+      Gem::Version.new(Rails.version) >= Gem::Version.new("7.1") ? :unprocessable_content : :unprocessable_entity
     end
   end
 end

@@ -20,6 +20,10 @@ RSpec.describe 'File controller' do
     )
   end
 
+  def unprocessable
+    Gem::Version.new(Rails.version) >= Gem::Version.new("7.1") ? :unprocessable_content : :unprocessable_entity
+  end
+
   let(:blob) { create_blob(filename: 'img.jpg', content_type: 'image/jpeg') }
   let(:url_options) do
     {
@@ -106,7 +110,7 @@ RSpec.describe 'File controller' do
     it 'uses blob direct upload with mismatched content type' do
       put blob.service_url_for_direct_upload, params: data, headers: { 'Content-Type' => 'application/octet-stream' }
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(unprocessable)
       expect(blob.service).not_to exist(blob.key)
     end
 
@@ -118,7 +122,7 @@ RSpec.describe 'File controller' do
       it 'fails to upload' do
         put blob.service_url_for_direct_upload, params: data
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(unprocessable)
         expect(blob.service).not_to exist(blob.key)
       end
     end
@@ -129,7 +133,7 @@ RSpec.describe 'File controller' do
       it 'fails to upload' do
         put blob.service_url_for_direct_upload, params: data, headers: { 'Content-Type' => 'text/plain' }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(unprocessable)
         expect(blob.service).not_to exist(blob.key)
       end
     end
@@ -154,7 +158,7 @@ RSpec.describe 'File controller' do
       it 'fails to upload' do
         put blob.service_url_for_direct_upload, params: data, headers: { 'Content-Type' => 'text/plain' }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(unprocessable)
       end
     end
   end
