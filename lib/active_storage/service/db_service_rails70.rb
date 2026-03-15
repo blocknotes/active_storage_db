@@ -6,11 +6,13 @@ module ActiveStorage
       buffer = nil
       comment = "DBService#compose"
       source_keys.each do |source_key|
-        data = ::ActiveStorageDB::File.annotate(comment).find_by!(ref: source_key).data
+        record = ::ActiveStorageDB::File.annotate(comment).find_by(ref: source_key)
+        raise ActiveStorage::FileNotFoundError unless record
+
         if buffer
-          buffer << data
+          buffer << record.data
         else
-          buffer = +data
+          buffer = +record.data
         end
       end
       ::ActiveStorageDB::File.create!(ref: destination_key, data: buffer) if buffer

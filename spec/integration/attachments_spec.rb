@@ -19,6 +19,8 @@ RSpec.describe "Attachments" do
         ActiveStorage.touch_attachment_records = false
         example.run
         ActiveStorage.touch_attachment_records = touch_option
+      else
+        example.run
       end
     end
 
