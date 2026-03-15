@@ -16,7 +16,7 @@ module ActiveStorageDB
 
     def update
       if (token = decode_verified_token)
-        file_uploaded = upload_file(token, body: request.body)
+        file_uploaded = upload_file(token)
         head(file_uploaded ? :no_content : unprocessable)
       else
         head(:not_found)
@@ -54,7 +54,7 @@ module ActiveStorageDB
       send_data(db_service.download(key), options)
     end
 
-    def upload_file(token, body:) # rubocop:disable Naming/PredicateMethod
+    def upload_file(token) # rubocop:disable Naming/PredicateMethod
       return false unless acceptable_content?(token)
 
       db_service.upload(token[:key], request.body, checksum: token[:checksum])
