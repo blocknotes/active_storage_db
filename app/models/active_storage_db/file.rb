@@ -4,7 +4,7 @@ module ActiveStorageDB
   class File < ApplicationRecord
     validates :ref,
               presence: true,
-              allow_blank: false,
               uniqueness: { case_sensitive: false }
+    validates :data, presence: true
   end
 end

@@ -6,9 +6,9 @@ RSpec.describe "ActiveStorageDB tasks" do
   describe "asdb:list" do
     subject(:task) { execute_task("asdb:list") }
 
-    let!(:first_file) { create(:active_storage_blob, filename: "some file 1", created_at: 1.hour.ago) }
-    let!(:second_file) { create(:active_storage_blob, filename: "some file 2", created_at: 5.hours.ago) }
-    let!(:third_file) { create(:active_storage_blob, filename: "some file 3", created_at: 3.hours.ago) }
+    let!(:first_file) { create(:active_storage_blob, filename: "some file 1") }
+    let!(:second_file) { create(:active_storage_blob, filename: "some file 2") }
+    let!(:third_file) { create(:active_storage_blob, filename: "some file 3") }
 
     it "prints the columns header + the list of 3 files", :aggregate_failures do
       pattern = /#{third_file.id}  #{third_file.filename}.+#{second_file.id}  #{second_file.filename}.+#{first_file.id}  #{first_file.filename}/m
@@ -29,10 +29,6 @@ RSpec.describe "ActiveStorageDB tasks" do
     context "with a missing source" do
       subject(:task) { execute_task("asdb:download", blob_id: "some_file") }
 
-      before do
-        allow(File).to receive(:writable?).and_return(true)
-      end
-
       it "exits showing a not found error" do
         with_captured_stderr do
           expect { task }.to raise_exception(SystemExit, /Source file not found/)
@@ -46,7 +42,7 @@ RSpec.describe "ActiveStorageDB tasks" do
       let(:blob) { build_stubbed(:active_storage_blob) }
 
       before do
-        allow(File).to receive(:writable?).and_return(false)
+        allow(File).to receive(:writable?).with(".").and_return(false)
         allow(ActiveStorage::Blob).to receive(:find_by).and_return(blob)
       end
 
@@ -63,13 +59,16 @@ RSpec.describe "ActiveStorageDB tasks" do
       let(:blob) { build_stubbed(:active_storage_blob) }
 
       before do
-        allow(File).to receive_messages(binwrite: 1000, writable?: true)
+        allow(File).to receive_messages(binwrite: 1000)
+        allow(File).to receive(:writable?).with(".").and_return(true)
         allow(ActiveStorage::Blob).to receive(:find_by).and_return(blob)
         allow(blob).to receive(:download).and_return("some data")
       end
 
-      it "prints the number of bytes written" do
+      it "downloads the blob and writes it to the destination", :aggregate_failures do
         expect(task).to eq "1000 bytes written - some_path\n"
+        expect(blob).to have_received(:download)
+        expect(File).to have_received(:binwrite).with("some_path", "some data")
       end
     end
   end
@@ -93,13 +92,13 @@ RSpec.describe "ActiveStorageDB tasks" do
       end
     end
 
-    context "with there are some results" do
+    context "when there are some results" do
       subject(:task) { execute_task("asdb:search", filename: "just ") }
 
       before do
-        create(:active_storage_blob, filename: "just a file", created_at: 1.hour.ago)
-        create(:active_storage_blob, filename: "just another file", created_at: 5.hours.ago)
-        create(:active_storage_blob, filename: "the last file", created_at: 3.hours.ago)
+        create(:active_storage_blob, filename: "just a file")
+        create(:active_storage_blob, filename: "just another file")
+        create(:active_storage_blob, filename: "the last file")
       end
 
       it "prints the files that matches", :aggregate_failures do

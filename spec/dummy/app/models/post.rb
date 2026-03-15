@@ -5,5 +5,5 @@ class Post < ApplicationRecord
     attachable.variant :thumb, resize_to_limit: [100, 100]
   end
 
-  validates :title, presence: true, allow_blank: false
+  validates :title, presence: true
 end

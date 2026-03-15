@@ -5,8 +5,8 @@
 [![maintainability](https://api.codeclimate.com/v1/badges/92e1e703c308744a0f66/maintainability)](https://codeclimate.com/github/blocknotes/active_storage_db/maintainability)
 
 [![linters](https://github.com/blocknotes/active_storage_db/actions/workflows/linters.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/linters.yml)
-[![Specs Postgres Rails 8.0](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_postgres_rails80.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_postgres_rails80.yml)
-[![Specs MySQL Rails 8.0](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_mysql_rails80.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_mysql_rails80.yml)
+[![Specs Postgres Rails 8.1](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_postgres_rails81.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_postgres_rails81.yml)
+[![Specs MySQL Rails 8.1](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_mysql_rails81.yml/badge.svg)](https://github.com/blocknotes/active_storage_db/actions/workflows/specs_mysql_rails81.yml)
 
 An Active Storage service upload/download plugin that stores files in a PostgreSQL or MySQL database.
 Experimental support also for MSSQL and SQLite.
@@ -21,8 +21,8 @@ Useful also with platforms like Heroku (due to their ephemeral file system).
 - Add to your Gemfile `gem 'active_storage_db'` (and execute: `bundle`)
 - Install the gem migrations: `bin/rails active_storage_db:install:migrations` (and execute: `bin/rails db:migrate`)
 - Add to your `config/routes.rb`: `mount ActiveStorageDB::Engine => '/active_storage_db'`
-- Change Active Storage service in *config/environments/development.rb* to: `config.active_storage.service = :db`
-- Add to *config/storage.yml*:
+- Change Active Storage service in _config/environments/development.rb_ to: `config.active_storage.service = :db`
+- Add to _config/storage.yml_:
 
 ```yml
 db:
