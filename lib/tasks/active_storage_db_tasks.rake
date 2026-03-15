@@ -9,9 +9,13 @@ module ActiveStorage
     end
 
     def print_blob(blob, digits: 0)
-      size = (blob.byte_size / 1024).to_s.rjust(7)
+      size = if blob.byte_size < 1024
+               "#{blob.byte_size}B".rjust(8)
+             else
+               "#{blob.byte_size / 1024}K".rjust(8)
+             end
       date = blob.created_at.strftime("%Y-%m-%d %H:%M")
-      puts "#{size}K  #{date}  #{blob.id.to_s.rjust(digits)}  #{blob.filename}"
+      puts "#{size}  #{date}  #{blob.id.to_s.rjust(digits)}  #{blob.filename}"
     end
   end
 end
