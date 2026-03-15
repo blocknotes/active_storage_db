@@ -1,25 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe "File controller" do
-  def create_blob(data: "Hello world!", filename: "hello.txt", content_type: "text/plain", identify: true, record: nil)
-    ActiveStorage::Blob.create_and_upload!(
-      io: StringIO.new(data),
-      filename: filename,
-      content_type: content_type,
-      identify: identify,
-      record: record
-    )
-  end
-
-  def create_blob_before_direct_upload(byte_size:, checksum:, filename: "hello.txt", content_type: "text/plain")
-    ActiveStorage::Blob.create_before_direct_upload!(
-      filename: filename,
-      byte_size: byte_size,
-      checksum: checksum,
-      content_type: content_type
-    )
-  end
-
   def unprocessable
     Gem::Version.new(Rails.version) >= Gem::Version.new("7.1") ? :unprocessable_content : :unprocessable_entity
   end
@@ -69,6 +50,19 @@ RSpec.describe "File controller" do
       content_disposition = response.headers["Content-Disposition"]
       expect(content_disposition).to eq("attachment; filename=\"img.jpg\"; filename*=UTF-8''img.jpg")
       expect(response.body).to eq "Hello world!"
+    end
+
+    context "with a blob that has no content type" do
+      let(:blob) { create_blob(filename: "data.bin", content_type: "application/octet-stream") }
+
+      it "serves the file with the stored content type", :aggregate_failures do
+        blob_url = blob.respond_to?(:url) ? blob.url : blob.service_url
+        get blob_url
+
+        expect(response).to have_http_status(:ok)
+        expect(response.content_type).to eq("application/octet-stream")
+        expect(response.body).to eq "Hello world!"
+      end
     end
 
     context "with a deleted blob" do
