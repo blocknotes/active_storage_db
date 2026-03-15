@@ -111,7 +111,7 @@ module ActiveStorage
     private
 
     def service_name_for_token
-      respond_to?(:name) ? name : "db"
+      name.presence || "db"
     end
 
     def adapter_sqlite?

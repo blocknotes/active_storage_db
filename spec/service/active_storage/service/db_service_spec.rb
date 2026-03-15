@@ -317,6 +317,18 @@ RSpec.describe ActiveStorage::Service::DBService do
     end
   end
 
+  describe "service_name_for_token" do
+    it "returns the service name when set" do
+      service.name = "custom_db"
+      expect(service.send(:service_name_for_token)).to eq("custom_db")
+    end
+
+    it "falls back to 'db' when name is nil" do
+      service.name = nil
+      expect(service.send(:service_name_for_token)).to eq("db")
+    end
+  end
+
   describe "chunk_size validation" do
     it "enforces a minimum chunk size of 1" do
       allow(ENV).to receive(:fetch).with("ASDB_CHUNK_SIZE").and_return("0")
