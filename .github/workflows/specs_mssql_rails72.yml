@@ -20,7 +20,7 @@ jobs:
       RAILS_VERSION: 7.2
 
     services:
-      postgres:
+      mssql:
         image: mcr.microsoft.com/mssql/server:2022-latest
         env:
           ACCEPT_EULA: 'Y'
