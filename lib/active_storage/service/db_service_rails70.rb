@@ -3,27 +3,24 @@
 module ActiveStorage
   module DBServiceRails70
     def compose(source_keys, destination_key, **)
-      buffer = nil
-      comment = "DBService#compose"
-      source_keys.each do |source_key|
-        record = ::ActiveStorageDB::File.annotate(comment).find_by(ref: source_key)
-        raise ActiveStorage::FileNotFoundError unless record
+      instrument :compose, key: destination_key do
+        buffer = nil
+        comment = "DBService#compose"
+        source_keys.each do |source_key|
+          record = ::ActiveStorageDB::File.annotate(comment).find_by(ref: source_key)
+          raise ActiveStorage::FileNotFoundError unless record
 
-        if buffer
-          buffer << record.data
-        else
-          buffer = +record.data
+          if buffer
+            buffer << record.data
+          else
+            buffer = +record.data
+          end
         end
+        ::ActiveStorageDB::File.create!(ref: destination_key, data: buffer) if buffer
       end
-      ::ActiveStorageDB::File.create!(ref: destination_key, data: buffer) if buffer
     end
 
     private
-
-    def current_host
-      opts = url_options || {}
-      opts[:port] ? "#{opts[:protocol]}#{opts[:host]}:#{opts[:port]}" : "#{opts[:protocol]}#{opts[:host]}"
-    end
 
     def private_url(key, expires_in:, filename:, content_type:, disposition:, **)
       generate_url(
@@ -45,8 +42,9 @@ module ActiveStorage
       )
     end
 
-    def url_options
-      ActiveStorage::Current.url_options
+    def url_params
+      opts = ActiveStorage::Current.url_options || {}
+      { protocol: opts[:protocol], host: opts[:host], port: opts[:port] }
     end
   end
 end

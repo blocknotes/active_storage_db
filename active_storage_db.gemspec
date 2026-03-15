@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
   spec.description = "An ActiveStorage service plugin to store files in database."
   spec.license = "MIT"
 
-  spec.required_ruby_version = ">= 2.7.0"
+  spec.required_ruby_version = ">= 3.0.0"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = spec.homepage
@@ -24,6 +24,6 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
-  spec.add_dependency "activestorage", ">= 6.0"
-  spec.add_dependency "rails", ">= 6.0"
+  spec.add_dependency "activestorage", ">= 6.1"
+  spec.add_dependency "rails", ">= 6.1"
 end

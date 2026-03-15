@@ -35,7 +35,7 @@ require 'rspec/rails'
 require 'factory_bot_rails'
 
 support_files = File.expand_path('support/**/*.rb', __dir__)
-Dir[support_files].sort.each { |f| require f }
+Dir[support_files].each { |f| require f }
 
 RSpec.configure do |config|
   config.filter_rails_from_backtrace!
