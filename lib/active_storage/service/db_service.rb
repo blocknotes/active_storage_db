@@ -184,11 +184,20 @@ module ActiveStorage
     end
 
     def stream(key)
-      data_size = adapter_sqlserver? ? "DATALENGTH(data)" : "OCTET_LENGTH(data)"
-      size = object_for(key, fields: "#{data_size} AS size")&.size || raise(ActiveStorage::FileNotFoundError)
+      size = object_for(key, fields: data_size)&.size || raise(ActiveStorage::FileNotFoundError)
       (size / @chunk_size.to_f).ceil.times.each do |i|
         range = (i * @chunk_size)..(((i + 1) * @chunk_size) - 1)
         yield download_chunk(key, range)
+      end
+    end
+
+    def data_size
+      if adapter_sqlserver?
+        "DATALENGTH(data) AS size"
+      elsif adapter_sqlite?
+        "LENGTH(data) AS size"
+      else
+        "OCTET_LENGTH(data) AS size"
       end
     end
 
