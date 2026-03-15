@@ -41,6 +41,15 @@ RSpec.describe ActiveStorageDB::File do
         )
       end
     end
+
+    context "when data is nil" do
+      it "raises record invalid exception" do
+        expect { create(:active_storage_db_file, data: nil) }.to raise_exception(
+          ActiveRecord::RecordInvalid,
+          /Data can't be blank/
+        )
+      end
+    end
   end
 
   describe "CRUD lifecycle" do
