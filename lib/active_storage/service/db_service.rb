@@ -18,8 +18,10 @@ module ActiveStorage
     end
     # :nocov:
 
+    MINIMUM_CHUNK_SIZE = 1
+
     def initialize(public: false, **)
-      @chunk_size = ENV.fetch("ASDB_CHUNK_SIZE") { 1.megabytes }.to_i
+      @chunk_size = [ENV.fetch("ASDB_CHUNK_SIZE") { 1.megabytes }.to_i, MINIMUM_CHUNK_SIZE].max
       @public = public
     end
 
@@ -49,7 +51,7 @@ module ActiveStorage
         size = range.size
         args = adapter_sqlserver? || adapter_sqlite? ? "data, #{from}, #{size}" : "data FROM #{from} FOR #{size}"
         record = object_for(key, fields: "SUBSTRING(#{args}) AS chunk")
-        raise(ActiveStorage::FileNotFoundError) unless record
+        raise ActiveStorage::FileNotFoundError unless record
 
         record.chunk
       end
@@ -158,7 +160,10 @@ module ActiveStorage
     end
 
     def ensure_integrity_of(key, checksum)
-      return if Digest::MD5.base64digest(object_for(key).data) == checksum
+      record = object_for(key)
+      raise ActiveStorage::FileNotFoundError unless record
+
+      return if Digest::MD5.base64digest(record.data) == checksum
 
       delete(key)
       raise ActiveStorage::IntegrityError
@@ -166,7 +171,7 @@ module ActiveStorage
 
     def retrieve_file(key)
       file = object_for(key)
-      raise(ActiveStorage::FileNotFoundError) unless file
+      raise ActiveStorage::FileNotFoundError unless file
 
       file.data
     end

@@ -77,6 +77,31 @@ RSpec.describe ActiveStorage::Service::DBService do
         expect(compose).to be_a ActiveStorageDB::File
         expect(compose.data).to eq [first_db_file.data, second_db_file.data, third_db_file.data].join
       end
+
+      context "when a source key is missing" do
+        subject(:compose) { service.compose(%w[key1 missing_key key3], "dest_key") }
+
+        it "raises FileNotFoundError" do
+          expect { compose }.to raise_exception(ActiveStorage::FileNotFoundError)
+        end
+
+        it "does not create the destination file" do
+          compose rescue nil # rubocop:disable Style/RescueModifier
+          expect(ActiveStorageDB::File.find_by(ref: "dest_key")).to be_nil
+        end
+      end
+
+      context "with empty source keys" do
+        subject(:compose) { service.compose([], "dest_key") }
+
+        it "does not create a destination file" do
+          expect { compose }.not_to change(ActiveStorageDB::File, :count)
+        end
+
+        it "returns nil" do
+          expect(compose).to be_nil
+        end
+      end
     end
   end
 
@@ -238,7 +263,7 @@ RSpec.describe ActiveStorage::Service::DBService do
   end
 
   describe ".url_for_direct_upload" do
-    subject do
+    subject(:url_for_direct_upload) do
       service.url_for_direct_upload(
         key,
         expires_in: 5.minutes,
@@ -260,5 +285,49 @@ RSpec.describe ActiveStorage::Service::DBService do
     after { service.delete(key) }
 
     it { is_expected.to start_with "#{url_options[:protocol]}#{url_options[:host]}" }
+
+    it "generates a token that contains the expected fields" do
+      url = url_for_direct_upload
+      token = url.split("/").last
+      verified = ActiveStorage.verifier.verified(token, purpose: :blob_token).symbolize_keys
+      expect(verified).to include(
+        key: key,
+        content_type: content_type,
+        content_length: fixture_data.size,
+        checksum: checksum
+      )
+      expect(verified[:service_name]).to be_present
+    end
+  end
+
+  describe ".ensure_integrity_of" do
+    before { upload }
+
+    after { service.delete(key) rescue nil } # rubocop:disable Style/RescueModifier
+
+    context "when the record is missing during integrity check" do
+      it "raises FileNotFoundError" do
+        # Simulate the record disappearing between upload and integrity check
+        allow(service).to receive(:object_for).with(key).and_return(nil)
+
+        expect {
+          service.send(:ensure_integrity_of, key, "bad_checksum")
+        }.to raise_exception(ActiveStorage::FileNotFoundError)
+      end
+    end
+  end
+
+  describe "chunk_size validation" do
+    it "enforces a minimum chunk size of 1" do
+      allow(ENV).to receive(:fetch).with("ASDB_CHUNK_SIZE").and_return("0")
+      svc = described_class.configure(:tmp, tmp: { service: "DB" })
+      expect(svc.instance_variable_get(:@chunk_size)).to eq(1)
+    end
+
+    it "enforces a minimum chunk size for negative values" do
+      allow(ENV).to receive(:fetch).with("ASDB_CHUNK_SIZE").and_return("-5")
+      svc = described_class.configure(:tmp, tmp: { service: "DB" })
+      expect(svc.instance_variable_get(:@chunk_size)).to eq(1)
+    end
   end
 end

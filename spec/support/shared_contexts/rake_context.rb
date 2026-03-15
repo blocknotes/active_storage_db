@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
-shared_context 'with rake tasks' do
-  Rails.application.load_tasks
+require "rake"
+
+shared_context "with rake tasks" do
+  before(:context) do
+    Rails.application.load_tasks unless Rake::Task.task_defined?("environment")
+  end
 
   def execute_task(task, args = nil)
     with_captured_stdout do
