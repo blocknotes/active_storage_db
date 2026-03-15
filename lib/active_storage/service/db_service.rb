@@ -27,9 +27,12 @@ module ActiveStorage
 
     def upload(key, io, checksum: nil, **)
       instrument :upload, key: key, checksum: checksum do
-        file = ::ActiveStorageDB::File.create!(ref: key, data: io.read)
-        ensure_integrity_of(key, checksum) if checksum
-        file
+        data = io.read
+        if checksum
+          digest = Digest::MD5.base64digest(data)
+          raise ActiveStorage::IntegrityError unless digest == checksum
+        end
+        ::ActiveStorageDB::File.create!(ref: key, data: data)
       end
     end
 
@@ -111,7 +114,7 @@ module ActiveStorage
     private
 
     def service_name_for_token
-      respond_to?(:name) ? name : "db"
+      name.presence || "db"
     end
 
     def adapter_sqlite?
@@ -159,16 +162,6 @@ module ActiveStorage
       )
     end
 
-    def ensure_integrity_of(key, checksum)
-      record = object_for(key)
-      raise ActiveStorage::FileNotFoundError unless record
-
-      return if Digest::MD5.base64digest(record.data) == checksum
-
-      delete(key)
-      raise ActiveStorage::IntegrityError
-    end
-
     def retrieve_file(key)
       file = object_for(key)
       raise ActiveStorage::FileNotFoundError unless file
@@ -184,11 +177,20 @@ module ActiveStorage
     end
 
     def stream(key)
-      data_size = adapter_sqlserver? ? "DATALENGTH(data)" : "OCTET_LENGTH(data)"
-      size = object_for(key, fields: "#{data_size} AS size")&.size || raise(ActiveStorage::FileNotFoundError)
+      size = object_for(key, fields: data_size)&.size || raise(ActiveStorage::FileNotFoundError)
       (size / @chunk_size.to_f).ceil.times.each do |i|
         range = (i * @chunk_size)..(((i + 1) * @chunk_size) - 1)
         yield download_chunk(key, range)
+      end
+    end
+
+    def data_size
+      if adapter_sqlserver?
+        "DATALENGTH(data) AS size"
+      elsif adapter_sqlite?
+        "LENGTH(data) AS size"
+      else
+        "OCTET_LENGTH(data) AS size"
       end
     end
 

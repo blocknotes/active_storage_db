@@ -247,6 +247,10 @@ RSpec.describe ActiveStorage::Service::DBService do
       it "fails to upload the data" do
         expect { upload }.to raise_exception ActiveStorage::IntegrityError
       end
+
+      it "does not persist the file" do
+        expect { upload rescue nil }.not_to change(ActiveStorageDB::File, :count) # rubocop:disable Style/RescueModifier
+      end
     end
 
     context "with a duplicate key" do
@@ -300,20 +304,15 @@ RSpec.describe ActiveStorage::Service::DBService do
     end
   end
 
-  describe ".ensure_integrity_of" do
-    before { upload }
+  describe "service_name_for_token" do
+    it "returns the service name when set" do
+      service.name = "custom_db"
+      expect(service.send(:service_name_for_token)).to eq("custom_db")
+    end
 
-    after { service.delete(key) rescue nil } # rubocop:disable Style/RescueModifier
-
-    context "when the record is missing during integrity check" do
-      it "raises FileNotFoundError" do
-        # Simulate the record disappearing between upload and integrity check
-        allow(service).to receive(:object_for).with(key).and_return(nil)
-
-        expect {
-          service.send(:ensure_integrity_of, key, "bad_checksum")
-        }.to raise_exception(ActiveStorage::FileNotFoundError)
-      end
+    it "falls back to 'db' when name is nil" do
+      service.name = nil
+      expect(service.send(:service_name_for_token)).to eq("db")
     end
   end
 
