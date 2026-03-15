@@ -146,7 +146,9 @@ RSpec.describe "File controller" do
       let(:invalid_file) { create(:active_storage_db_file, data: "Some other data") }
 
       before do
-        allow(ActiveStorageDB::File).to receive(:find_by).and_return(invalid_file)
+        annotated_scope = ActiveStorageDB::File.annotate("DBService#object_for")
+        allow(ActiveStorageDB::File).to receive(:annotate).and_return(annotated_scope)
+        allow(annotated_scope).to receive(:find_by).and_return(invalid_file)
       end
 
       it "fails to upload" do

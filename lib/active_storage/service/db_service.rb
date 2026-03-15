@@ -68,7 +68,7 @@ module ActiveStorage
     def delete_prefixed(prefix)
       instrument :delete_prefixed, prefix: prefix do
         comment = "DBService#delete_prefixed"
-        sanitized_prefix = "#{ApplicationRecord.sanitize_sql_like(prefix)}%"
+        sanitized_prefix = "#{ActiveRecord::Base.sanitize_sql_like(prefix)}%"
         ::ActiveStorageDB::File.annotate(comment).where("ref LIKE ?", sanitized_prefix).destroy_all
       end
     end
@@ -165,8 +165,9 @@ module ActiveStorage
 
     def object_for(key, fields: nil)
       comment = "DBService#object_for"
-      as_file = fields ? ::ActiveStorageDB::File.annotate(comment).select(*fields) : ::ActiveStorageDB::File
-      as_file.find_by(ref: key)
+      scope = ::ActiveStorageDB::File.annotate(comment)
+      scope = scope.select(*fields) if fields
+      scope.find_by(ref: key)
     end
 
     def stream(key)
