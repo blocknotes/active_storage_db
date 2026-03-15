@@ -20,7 +20,6 @@ class CreateActiveStorageDBFiles < ActiveRecord::Migration[6.0]
 
   def primary_key_type
     config = Rails.configuration.generators
-    primary_key_type = config.options[config.orm][:primary_key_type]
-    primary_key_type || :primary_key
+    config.options.dig(config.orm, :primary_key_type) || :primary_key
   end
 end
