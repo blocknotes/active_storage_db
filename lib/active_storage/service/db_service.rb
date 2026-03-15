@@ -165,8 +165,9 @@ module ActiveStorage
 
     def object_for(key, fields: nil)
       comment = "DBService#object_for"
-      as_file = fields ? ::ActiveStorageDB::File.annotate(comment).select(*fields) : ::ActiveStorageDB::File
-      as_file.find_by(ref: key)
+      scope = ::ActiveStorageDB::File.annotate(comment)
+      scope = scope.select(*fields) if fields
+      scope.find_by(ref: key)
     end
 
     def stream(key)
