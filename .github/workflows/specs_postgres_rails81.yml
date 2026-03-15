@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        ruby: ['3.2', '3.4']
+        ruby: ['3.4', '4.0']
 
     env:
       DB_TEST: postgres
