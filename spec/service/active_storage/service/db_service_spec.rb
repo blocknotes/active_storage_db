@@ -110,7 +110,7 @@ RSpec.describe ActiveStorage::Service::DBService do
 
     before { upload }
 
-    it { is_expected.to be_truthy }
+    it { is_expected.to be true }
 
     it "deletes the file" do
       expect { delete }.to change(ActiveStorageDB::File, :count).from(1).to(0)
@@ -119,17 +119,23 @@ RSpec.describe ActiveStorage::Service::DBService do
     context "when the attachment is not found" do
       subject(:delete) { service.delete("#{key}!") }
 
-      it { is_expected.to be_falsey }
+      it { is_expected.to be false }
     end
   end
 
   describe ".delete_prefixed" do
     subject(:delete_prefixed) { service.delete_prefixed(key[0..10]) }
 
-    before { upload }
+    let(:other_file) { create(:active_storage_db_file, ref: "unrelated_prefix_file") }
 
-    it "deletes the files" do
-      expect { delete_prefixed }.to change(ActiveStorageDB::File, :count).from(1).to(0)
+    before do
+      other_file
+      upload
+    end
+
+    it "deletes only matching files", :aggregate_failures do
+      expect { delete_prefixed }.to change(ActiveStorageDB::File, :count).by(-1)
+      expect(ActiveStorageDB::File.find_by(ref: "unrelated_prefix_file")).to be_present
     end
 
     context "when no files match the prefix" do
@@ -151,8 +157,6 @@ RSpec.describe ActiveStorage::Service::DBService do
     context "with an existing file" do
       before { upload }
 
-      after { service.delete(key) }
-
       it "downloads the data" do
         expect(download).to eq fixture_data
       end
@@ -167,9 +171,9 @@ RSpec.describe ActiveStorage::Service::DBService do
         it "yields multiple chunks when data exceeds chunk size", :aggregate_failures do
           chunks = []
           service.download(key) { |chunk| chunks << chunk }
-          # fixture_data is a PNG (~100 bytes), chunk size is 100 bytes,
-          # so we expect at least 1 chunk yielded via the streaming path
-          expect(chunks).not_to be_empty
+          # fixture_data is 126 bytes, chunk size is 100 bytes,
+          # so we expect exactly 2 chunks via the streaming path
+          expect(chunks.size).to eq 2
           expect(chunks.join).to eq fixture_data
         end
       end
@@ -192,8 +196,6 @@ RSpec.describe ActiveStorage::Service::DBService do
 
     before { upload }
 
-    after { service.delete(key) }
-
     it { is_expected.to eq fixture_data[range] }
 
     context "when the attachment is not found" do
@@ -206,14 +208,12 @@ RSpec.describe ActiveStorage::Service::DBService do
   describe ".exist?" do
     subject { service.exist?(key) }
 
-    it { is_expected.to be_falsey }
+    it { is_expected.to be false }
 
     context "when a file is uploaded" do
       before { upload }
 
-      after { service.delete(key) }
-
-      it { is_expected.to be_truthy }
+      it { is_expected.to be true }
     end
   end
 
@@ -226,8 +226,6 @@ RSpec.describe ActiveStorage::Service::DBService do
   describe ".upload" do
     it "uploads the data" do
       expect(upload).to be_a ActiveStorageDB::File
-    ensure
-      service.delete(key)
     end
 
     context "with the checksum" do
@@ -235,8 +233,6 @@ RSpec.describe ActiveStorage::Service::DBService do
 
       it "uploads the data" do
         expect(upload).to be_a ActiveStorageDB::File
-      ensure
-        service.delete(key)
       end
     end
 
@@ -255,8 +251,6 @@ RSpec.describe ActiveStorage::Service::DBService do
 
     context "with a duplicate key" do
       before { upload }
-
-      after { service.delete(key) }
 
       it "raises a uniqueness error" do
         expect {
@@ -285,8 +279,6 @@ RSpec.describe ActiveStorage::Service::DBService do
         allow(ActiveStorage::Current).to receive(:host).and_return(host)
       end
     end
-
-    after { service.delete(key) }
 
     it { is_expected.to start_with "#{url_options[:protocol]}#{url_options[:host]}" }
 
