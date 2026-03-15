@@ -28,7 +28,8 @@ module ActiveStorageDB
     private
 
     def acceptable_content?(token)
-      token[:content_type] == request.content_mime_type && token[:content_length] == request.content_length
+      token[:content_type] == request.content_mime_type &&
+        token[:content_length] == request.content_length
     end
 
     def db_service
@@ -53,7 +54,7 @@ module ActiveStorageDB
       send_data(db_service.download(key), options)
     end
 
-    def upload_file(token, body:)
+    def upload_file(token, body:) # rubocop:disable Naming/PredicateMethod
       return false unless acceptable_content?(token)
 
       db_service.upload(token[:key], request.body, checksum: token[:checksum])
@@ -61,7 +62,11 @@ module ActiveStorageDB
     end
 
     def unprocessable
-      Gem::Version.new(Rails.version) >= Gem::Version.new("7.1") ? :unprocessable_content : :unprocessable_entity
+      if Rails::VERSION::MAJOR > 7 || (Rails::VERSION::MAJOR == 7 && Rails::VERSION::MINOR >= 1)
+        :unprocessable_content
+      else
+        :unprocessable_entity
+      end
     end
   end
 end
