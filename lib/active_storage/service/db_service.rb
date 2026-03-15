@@ -27,9 +27,12 @@ module ActiveStorage
 
     def upload(key, io, checksum: nil, **)
       instrument :upload, key: key, checksum: checksum do
-        file = ::ActiveStorageDB::File.create!(ref: key, data: io.read)
-        ensure_integrity_of(key, checksum) if checksum
-        file
+        data = io.read
+        if checksum
+          digest = Digest::MD5.base64digest(data)
+          raise ActiveStorage::IntegrityError unless digest == checksum
+        end
+        ::ActiveStorageDB::File.create!(ref: key, data: data)
       end
     end
 
@@ -157,16 +160,6 @@ module ActiveStorage
         content_type: content_type,
         filename: filename
       )
-    end
-
-    def ensure_integrity_of(key, checksum)
-      record = object_for(key)
-      raise ActiveStorage::FileNotFoundError unless record
-
-      return if Digest::MD5.base64digest(record.data) == checksum
-
-      delete(key)
-      raise ActiveStorage::IntegrityError
     end
 
     def retrieve_file(key)

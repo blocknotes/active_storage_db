@@ -143,18 +143,13 @@ RSpec.describe "File controller" do
     end
 
     context "when the integrity check fails" do
-      let(:invalid_file) { create(:active_storage_db_file, data: "Some other data") }
+      it "fails to upload and does not persist the file", :aggregate_failures do
+        allow(blob.service).to receive(:upload).and_raise(ActiveStorage::IntegrityError)
 
-      before do
-        annotated_scope = ActiveStorageDB::File.annotate("DBService#object_for")
-        allow(ActiveStorageDB::File).to receive(:annotate).and_return(annotated_scope)
-        allow(annotated_scope).to receive(:find_by).and_return(invalid_file)
-      end
-
-      it "fails to upload" do
         put blob.service_url_for_direct_upload, params: data, headers: { "Content-Type" => "text/plain" }
 
         expect(response).to have_http_status(unprocessable)
+        expect(blob.service).not_to exist(blob.key)
       end
     end
   end
