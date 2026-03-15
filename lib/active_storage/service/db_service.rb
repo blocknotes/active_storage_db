@@ -18,8 +18,10 @@ module ActiveStorage
     end
     # :nocov:
 
+    MINIMUM_CHUNK_SIZE = 1
+
     def initialize(public: false, **)
-      @chunk_size = ENV.fetch("ASDB_CHUNK_SIZE") { 1.megabytes }.to_i
+      @chunk_size = [ENV.fetch("ASDB_CHUNK_SIZE") { 1.megabytes }.to_i, MINIMUM_CHUNK_SIZE].max
       @public = public
     end
 
