@@ -4,10 +4,6 @@ module ActiveStorage
   module DBServiceRails61
     private
 
-    def current_host
-      url_options[:host]
-    end
-
     def private_url(key, expires_in:, filename:, content_type:, disposition:, **)
       generate_url(
         key,
@@ -28,10 +24,9 @@ module ActiveStorage
       )
     end
 
-    def url_options
-      {
-        host: ActiveStorage::Current.host
-      }
+    def url_params
+      uri = URI.parse(ActiveStorage::Current.host)
+      { protocol: uri.scheme, host: uri.host, port: uri.port }
     end
   end
 end

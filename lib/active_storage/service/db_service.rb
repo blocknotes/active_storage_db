@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "active_storage/service/db_service_rails60"
 require "active_storage/service/db_service_rails61"
 require "active_storage/service/db_service_rails70"
 
@@ -11,10 +10,8 @@ module ActiveStorage
     # :nocov:
     if Rails::VERSION::MAJOR >= 7
       include ActiveStorage::DBServiceRails70
-    elsif Rails::VERSION::MAJOR == 6 && Rails::VERSION::MINOR == 1
-      include ActiveStorage::DBServiceRails61
     else
-      include ActiveStorage::DBServiceRails60
+      include ActiveStorage::DBServiceRails61
     end
     # :nocov:
 
@@ -101,7 +98,7 @@ module ActiveStorage
           purpose: :blob_token
         )
 
-        url_helpers.update_service_url(verified_token_with_expiration, url_options).tap do |generated_url|
+        url_helpers.update_service_url(verified_token_with_expiration, url_params).tap do |generated_url|
           payload[:url] = generated_url
         end
       end
@@ -150,12 +147,9 @@ module ActiveStorage
         purpose: :blob_key
       )
 
-      current_uri = URI.parse(current_host)
       url_helpers.service_url(
         verified_key_with_expiration,
-        protocol: current_uri.scheme,
-        host: current_uri.host,
-        port: current_uri.port,
+        **url_params,
         disposition: content_disposition,
         content_type: content_type,
         filename: filename
