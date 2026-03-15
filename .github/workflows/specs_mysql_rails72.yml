@@ -18,24 +18,11 @@ jobs:
     env:
       DB_TEST: mysql
       RAILS_VERSION: 7.2
-
-    services:
-      mysql:
-        image: mysql
-        env:
-          MYSQL_USER: root
-          MYSQL_PASSWORD: root
-        # options: >-
-        #   --health-cmd="mysqladmin ping"
-        #   --health-interval 10s
-        #   --health-timeout 5s
-        #   --health-retries 5
-        ports:
-          - 3306:3306
+      RUBY_VERSION: ${{ matrix.ruby }}
 
     steps:
       - name: Install dependencies
-        run: sudo apt-get update -qq && sudo apt-get install -yqq freetds-dev freetds-bin libvips-dev
+        run: sudo apt-get update -qq && sudo apt-get install -yqq libvips-dev
 
       - name: Checkout repository
         uses: actions/checkout@v4
