@@ -109,11 +109,15 @@ module ActiveStorage
     private
 
     def adapter_sqlite?
-      @adapter_sqlite ||= active_storage_db_adapter_name == "SQLite"
+      return @adapter_sqlite if defined?(@adapter_sqlite)
+
+      @adapter_sqlite = active_storage_db_adapter_name == "SQLite"
     end
 
     def adapter_sqlserver?
-      @adapter_sqlserver ||= active_storage_db_adapter_name == "SQLServer"
+      return @adapter_sqlserver if defined?(@adapter_sqlserver)
+
+      @adapter_sqlserver = active_storage_db_adapter_name == "SQLServer"
     end
 
     def active_storage_db_adapter_name
