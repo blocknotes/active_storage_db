@@ -18,6 +18,7 @@ jobs:
     env:
       DB_TEST: postgres
       RAILS_VERSION: 8.0
+      RUBY_VERSION: ${{ matrix.ruby }}
 
     services:
       postgres:
@@ -35,7 +36,7 @@ jobs:
 
     steps:
       - name: Install dependencies
-        run: sudo apt-get update -qq && sudo apt-get install -yqq freetds-dev freetds-bin libvips-dev
+        run: sudo apt-get update -qq && sudo apt-get install -yqq libvips-dev
 
       - name: Checkout repository
         uses: actions/checkout@v4
