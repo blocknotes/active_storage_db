@@ -90,7 +90,7 @@ module ActiveStorage
             content_type: content_type,
             content_length: content_length,
             checksum: checksum,
-            service_name: respond_to?(:name) ? name : "db"
+            service_name: service_name_for_token
           },
           expires_in: expires_in,
           purpose: :blob_token
@@ -107,6 +107,10 @@ module ActiveStorage
     end
 
     private
+
+    def service_name_for_token
+      respond_to?(:name) ? name : "db"
+    end
 
     def adapter_sqlite?
       return @adapter_sqlite if defined?(@adapter_sqlite)
@@ -135,7 +139,7 @@ module ActiveStorage
           key: key,
           disposition: content_disposition,
           content_type: content_type,
-          service_name: respond_to?(:name) ? name : "db"
+          service_name: service_name_for_token
         },
         expires_in: expires_in,
         purpose: :blob_key
