@@ -2,7 +2,7 @@
 
 RSpec.describe "File controller" do
   def unprocessable
-    Gem::Version.new(Rails.version) >= Gem::Version.new("7.1") ? :unprocessable_content : :unprocessable_entity
+    Rails::VERSION::MAJOR > 7 || (Rails::VERSION::MAJOR == 7 && Rails::VERSION::MINOR >= 1) ? :unprocessable_content : :unprocessable_entity
   end
 
   let(:blob) { create_blob(filename: "img.jpg", content_type: "image/jpeg") }

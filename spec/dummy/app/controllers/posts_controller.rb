@@ -72,6 +72,6 @@ class PostsController < ApplicationController
   end
 
   def unprocessable
-    Gem::Version.new(Rails.version) >= Gem::Version.new("7.1") ? :unprocessable_content : :unprocessable_entity
+    Rails::VERSION::MAJOR > 7 || (Rails::VERSION::MAJOR == 7 && Rails::VERSION::MINOR >= 1) ? :unprocessable_content : :unprocessable_entity
   end
 end
