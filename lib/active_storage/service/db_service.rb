@@ -5,23 +5,23 @@ require "active_storage/service/db_service_rails61"
 require "active_storage/service/db_service_rails70"
 
 module ActiveStorage
-  # Wraps a DB table as an Active Storage service. See ActiveStorage::Service
-  # for the generic API documentation that applies to all services.
   class Service::DBService < Service
-    # :nocov:
-    if Rails::VERSION::MAJOR >= 7
-      include ActiveStorage::DBServiceRails70
-    elsif Rails::VERSION::MAJOR == 6 && Rails::VERSION::MINOR == 1
-      include ActiveStorage::DBServiceRails61
-    else
-      include ActiveStorage::DBServiceRails60
-    end
-    # :nocov:
+    include ActiveStorage::DBServiceRails70
+
+    DEFAULT_RETRY_OPTIONS = {
+      max_attempts: 3,
+      base_delay: 0.1,
+      max_delay: 2.0,
+      retryable_errors: [
+        ActiveRecord::ConnectionFailed,
+        ActiveRecord::StatementTimeout
+      ].freeze
+    }.freeze
 
     MINIMUM_CHUNK_SIZE = 1
 
-    def initialize(public: false, **)
-      @chunk_size = [ENV.fetch("ASDB_CHUNK_SIZE") { 1.megabytes }.to_i, MINIMUM_CHUNK_SIZE].max
+    def initialize(public: false, chunk_size: nil, **)
+      @chunk_size = [chunk_size || ENV.fetch("ASDB_CHUNK_SIZE") { 1.megabyte }.to_i, MINIMUM_CHUNK_SIZE].max
       @max_size = ENV.fetch("ASDB_MAX_FILE_SIZE", nil)&.to_i
       @public = public
     end
@@ -37,7 +37,7 @@ module ActiveStorage
           digest = Digest::MD5.base64digest(data)
           raise ActiveStorage::IntegrityError unless digest == checksum
         end
-        ::ActiveStorageDB::File.create!(ref: key, data: data)
+        retry_on_failure { ::ActiveStorageDB::File.create!(ref: key, data: data) }
       end
     end
 
@@ -55,25 +55,23 @@ module ActiveStorage
 
     def download_chunk(key, range)
       instrument :download_chunk, key: key, range: range do
-        # NOTE: from/size are derived from Range#begin and Range#size (always integers),
-        # so string interpolation into SQL is safe here.
-        from = range.begin + 1
-        size = range.size
-        args = adapter_sqlserver? || adapter_sqlite? ? "data, #{from}, #{size}" : "data FROM #{from} FOR #{size}"
-        record = object_for(key, fields: "SUBSTRING(#{args}) AS chunk")
-        raise ActiveStorage::FileNotFoundError unless record
+        chunk = if adapter_postgresql? && @chunk_size >= 1.megabyte
+                  pg_read_binary(key, range)
+                else
+                  sql_chunk(key, range)
+                end
+        raise ActiveStorage::FileNotFoundError unless chunk
 
-        record.chunk
+        chunk
       end
     end
 
     def delete(key)
       instrument :delete, key: key do
         comment = "DBService#delete"
-        record = ::ActiveStorageDB::File.annotate(comment).find_by(ref: key)
-        record&.destroy
-        # NOTE: Ignore files already deleted
-        !record.nil?
+        retry_on_failure do
+          ::ActiveStorageDB::File.annotate(comment).where(ref: key).delete > 0
+        end
       end
     end
 
@@ -81,7 +79,9 @@ module ActiveStorage
       instrument :delete_prefixed, prefix: prefix do
         comment = "DBService#delete_prefixed"
         sanitized_prefix = "#{ActiveRecord::Base.sanitize_sql_like(prefix)}%"
-        ::ActiveStorageDB::File.annotate(comment).where("ref LIKE ?", sanitized_prefix).destroy_all
+        retry_on_failure do
+          ::ActiveStorageDB::File.annotate(comment).where("ref LIKE ?", sanitized_prefix).delete_all
+        end
       end
     end
 
@@ -120,20 +120,61 @@ module ActiveStorage
 
     private
 
+    def retry_options
+      @retry_options ||= {
+        max_attempts: 3,
+        base_delay: 0.1,
+        max_delay: 2.0,
+        retryable_errors: default_retryable_errors
+      }
+    end
+
+    def retry_on_failure
+      attempts = 0
+      max_attempts = retry_options[:max_attempts]
+      base_delay = retry_options[:base_delay]
+      max_delay = retry_options[:max_delay]
+      retryable_errors = retry_options[:retryable_errors]
+
+      begin
+        yield
+      rescue *retryable_errors
+        attempts += 1
+        raise if attempts >= max_attempts
+
+        delay = [base_delay * (2**attempts), max_delay].min
+        sleep(delay)
+        retry
+      end
+    end
+
+    def default_retryable_errors
+      errors = [
+        ActiveRecord::ConnectionFailed,
+        ActiveRecord::StatementTimeout
+      ]
+      errors << PG::ConnectionBad if defined?(PG::ConnectionBad)
+      errors
+    end
+
     def service_name_for_token
       name.presence || "db"
     end
 
     def adapter_sqlite?
-      return @adapter_sqlite if defined?(@adapter_sqlite)
-
-      @adapter_sqlite = active_storage_db_adapter_name == "SQLite"
+      @adapter_sqlite ||= active_storage_db_adapter_name == "SQLite"
     end
 
     def adapter_sqlserver?
-      return @adapter_sqlserver if defined?(@adapter_sqlserver)
+      @adapter_sqlserver ||= active_storage_db_adapter_name == "SQLServer"
+    end
 
-      @adapter_sqlserver = active_storage_db_adapter_name == "SQLServer"
+    def adapter_postgresql?
+      @adapter_postgresql ||= active_storage_db_adapter_name == "PostgreSQL"
+    end
+
+    def adapter_mysql?
+      @adapter_mysql ||= active_storage_db_adapter_name == "Mysql2"
     end
 
     def active_storage_db_adapter_name
@@ -189,6 +230,23 @@ module ActiveStorage
         range = (i * @chunk_size)..(((i + 1) * @chunk_size) - 1)
         yield download_chunk(key, range)
       end
+    end
+
+    def sql_chunk(key, range)
+      from = range.begin + 1
+      size = range.size
+      args = adapter_sqlserver? || adapter_sqlite? ? "data, #{from}, #{size}" : "data FROM #{from} FOR #{size}"
+      record = object_for(key, fields: "SUBSTRING(#{args}) AS chunk")
+      record&.chunk
+    end
+
+    def pg_read_binary(key, range)
+      from = range.begin + 1
+      size = range.size
+      comment = "DBService#pg_read_binary"
+      ::ActiveStorageDB::File.annotate(comment).where(ref: key).pick("get_byte(data, (#{from} - 1) + generate_series(0, #{size} - 1))")
+    rescue ActiveRecord::StatementInvalid
+      sql_chunk(key, range)
     end
 
     def data_size
