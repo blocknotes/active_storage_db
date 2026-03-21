@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-ENV['RAILS_ENV'] = 'test'
+ENV["RAILS_ENV"] = "test"
 
-require 'simplecov'
-require 'simplecov-lcov'
+require "simplecov"
+require "simplecov-lcov"
 
 SimpleCov::Formatter::LcovFormatter.config do |c|
   c.report_with_single_file = true
@@ -26,15 +26,15 @@ SimpleCov.start :rails do
   add_filter %r{^/vendor/}
 end
 
-require 'spec_helper'
+require "spec_helper"
 
 require File.expand_path("dummy/config/environment.rb", __dir__)
 
-abort('The Rails environment is running in production mode!') if Rails.env.production?
-require 'rspec/rails'
-require 'factory_bot_rails'
+abort("The Rails environment is running in production mode!") if Rails.env.production?
+require "rspec/rails"
+require "factory_bot_rails"
 
-support_files = File.expand_path('support/**/*.rb', __dir__)
+support_files = File.expand_path("support/**/*.rb", __dir__)
 Dir[support_files].sort.each { |f| require f }
 
 RSpec.configure do |config|
@@ -50,14 +50,14 @@ RSpec.configure do |config|
         ActiveRecord::Base.connection_config
       end
 
-    intro = ('-' * 80)
+    intro = ("-" * 80)
     intro << "\n"
     intro << "- Ruby:          #{RUBY_VERSION}\n"
     intro << "- Rails:         #{Rails.version}\n"
     intro << "- ActiveStorage: #{ActiveStorage.version}\n"
     intro << "- DB adapter:    #{db_config[:adapter]}\n"
     intro << "- DB name:       #{db_config[:database]}\n"
-    intro << ('-' * 80)
+    intro << ("-" * 80)
 
     RSpec.configuration.reporter.message(intro)
   end
