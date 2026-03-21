@@ -22,12 +22,17 @@ module ActiveStorage
 
     def initialize(public: false, **)
       @chunk_size = [ENV.fetch("ASDB_CHUNK_SIZE") { 1.megabytes }.to_i, MINIMUM_CHUNK_SIZE].max
+      @max_size = ENV.fetch("ASDB_MAX_FILE_SIZE", nil)&.to_i
       @public = public
     end
 
     def upload(key, io, checksum: nil, **)
       instrument :upload, key: key, checksum: checksum do
         data = io.read
+        if @max_size && data.bytesize > @max_size
+          raise ArgumentError, "File size exceeds the maximum allowed size of #{@max_size} bytes"
+        end
+
         if checksum
           digest = Digest::MD5.base64digest(data)
           raise ActiveStorage::IntegrityError unless digest == checksum
