@@ -50,6 +50,8 @@ module ActiveStorage
 
     def download_chunk(key, range)
       instrument :download_chunk, key: key, range: range do
+        # NOTE: from/size are derived from Range#begin and Range#size (always integers),
+        # so string interpolation into SQL is safe here.
         from = range.begin + 1
         size = range.size
         args = adapter_sqlserver? || adapter_sqlite? ? "data, #{from}, #{size}" : "data FROM #{from} FOR #{size}"
@@ -81,7 +83,7 @@ module ActiveStorage
     def exist?(key)
       instrument :exist, key: key do |payload|
         comment = "DBService#exist?"
-        result = ::ActiveStorageDB::File.annotate(comment).where(ref: key).exists?
+        result = ::ActiveStorageDB::File.annotate(comment).exists?(ref: key)
         payload[:exist] = result
         result
       end
@@ -172,7 +174,7 @@ module ActiveStorage
     def object_for(key, fields: nil)
       comment = "DBService#object_for"
       scope = ::ActiveStorageDB::File.annotate(comment)
-      scope = scope.select(*fields) if fields
+      scope = scope.select(fields) if fields
       scope.find_by(ref: key)
     end
 
