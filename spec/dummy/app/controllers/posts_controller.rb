@@ -32,7 +32,7 @@ class PostsController < ApplicationController
         format.json { render :show, status: :created, location: @post }
       else
         format.html { render :new }
-        format.json { render json: { errors: @post.errors }, status: unprocessable }
+        format.json { render json: { errors: @post.errors }, status: ActiveStorageDB::UNPROCESSABLE_STATUS }
       end
     end
   end
@@ -46,7 +46,7 @@ class PostsController < ApplicationController
         format.json { render :show, status: :ok, location: @post }
       else
         format.html { render :edit }
-        format.json { render json: { errors: @post.errors }, status: unprocessable }
+        format.json { render json: { errors: @post.errors }, status: ActiveStorageDB::UNPROCESSABLE_STATUS }
       end
     end
   end
@@ -69,9 +69,5 @@ class PostsController < ApplicationController
 
   def post_params
     params.fetch(:post) { {} }.permit!
-  end
-
-  def unprocessable
-    Rails::VERSION::MAJOR > 7 || (Rails::VERSION::MAJOR == 7 && Rails::VERSION::MINOR >= 1) ? :unprocessable_content : :unprocessable_entity
   end
 end
