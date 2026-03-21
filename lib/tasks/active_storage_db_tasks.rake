@@ -9,21 +9,30 @@ module ActiveStorage
     end
 
     def print_blob(blob, digits: 0)
-      size = if blob.byte_size < 1024
-               "#{blob.byte_size}B".rjust(8)
-             else
-               "#{blob.byte_size / 1024}K".rjust(8)
-             end
+      size = format_size(blob.byte_size)
       date = blob.created_at.strftime("%Y-%m-%d %H:%M")
       puts "#{size}  #{date}  #{blob.id.to_s.rjust(digits)}  #{blob.filename}"
+    end
+
+    def format_size(bytes)
+      if bytes >= 1.gigabyte
+        "#{(bytes / 1.gigabyte.to_f).round(1)}G".rjust(8)
+      elsif bytes >= 1.megabyte
+        "#{(bytes / 1.megabyte.to_f).round(1)}M".rjust(8)
+      elsif bytes >= 1.kilobyte
+        "#{bytes / 1024}K".rjust(8)
+      else
+        "#{bytes}B".rjust(8)
+      end
     end
   end
 end
 
 namespace :asdb do
   desc "ActiveStorageDB: list attachments ordered by blob id desc"
-  task list: [:environment] do |_t, _args|
-    query = ActiveStorage::Blob.order(id: :desc).limit(100)
+  task :list, [:count] => [:environment] do |_t, args|
+    count = (args[:count] || 100).to_i
+    query = ActiveStorage::Blob.order(id: :desc).limit(count)
     digits = query.ids.inject(0) { |ret, id|
       size = id.to_s.size
       [size, ret].max

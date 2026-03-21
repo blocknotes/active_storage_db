@@ -22,12 +22,17 @@ module ActiveStorage
 
     def initialize(public: false, **)
       @chunk_size = [ENV.fetch("ASDB_CHUNK_SIZE") { 1.megabytes }.to_i, MINIMUM_CHUNK_SIZE].max
+      @max_size = ENV.fetch("ASDB_MAX_FILE_SIZE", nil)&.to_i
       @public = public
     end
 
     def upload(key, io, checksum: nil, **)
       instrument :upload, key: key, checksum: checksum do
         data = io.read
+        if @max_size && data.bytesize > @max_size
+          raise ArgumentError, "File size exceeds the maximum allowed size of #{@max_size} bytes"
+        end
+
         if checksum
           digest = Digest::MD5.base64digest(data)
           raise ActiveStorage::IntegrityError unless digest == checksum
@@ -50,6 +55,8 @@ module ActiveStorage
 
     def download_chunk(key, range)
       instrument :download_chunk, key: key, range: range do
+        # NOTE: from/size are derived from Range#begin and Range#size (always integers),
+        # so string interpolation into SQL is safe here.
         from = range.begin + 1
         size = range.size
         args = adapter_sqlserver? || adapter_sqlite? ? "data, #{from}, #{size}" : "data FROM #{from} FOR #{size}"
@@ -81,7 +88,7 @@ module ActiveStorage
     def exist?(key)
       instrument :exist, key: key do |payload|
         comment = "DBService#exist?"
-        result = ::ActiveStorageDB::File.annotate(comment).where(ref: key).exists?
+        result = ::ActiveStorageDB::File.annotate(comment).exists?(ref: key)
         payload[:exist] = result
         result
       end
@@ -172,7 +179,7 @@ module ActiveStorage
     def object_for(key, fields: nil)
       comment = "DBService#object_for"
       scope = ::ActiveStorageDB::File.annotate(comment)
-      scope = scope.select(*fields) if fields
+      scope = scope.select(fields) if fields
       scope.find_by(ref: key)
     end
 
