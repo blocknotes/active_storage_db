@@ -24,7 +24,7 @@ module Dummy
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
-    config.hosts << 'test.example.com'
+    config.hosts << "test.example.com"
 
     config.before_initialize do
       FactoryBot.definition_file_paths << Rails.root.join("../factories") if defined?(FactoryBot)
