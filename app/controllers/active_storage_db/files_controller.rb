@@ -6,7 +6,8 @@ module ActiveStorageDB
 
     def show
       if (key = decode_verified_key)
-        serve_file(key[:key], content_type: key[:content_type], disposition: key[:disposition])
+        attrs = key.slice(:content_type, :disposition, :service_name)
+        serve_file(key[:key], **attrs)
       else
         head(:not_found)
       end
@@ -32,8 +33,12 @@ module ActiveStorageDB
         token[:content_length] == request.content_length
     end
 
-    def db_service
-      ActiveStorage::Blob.service
+    def db_service_for(service_name)
+      if service_name && ActiveStorage::Blob.respond_to?(:services)
+        ActiveStorage::Blob.services.fetch(service_name) { ActiveStorage::Blob.service }
+      else
+        ActiveStorage::Blob.service
+      end
     end
 
     def decode_verified_key
@@ -46,18 +51,19 @@ module ActiveStorageDB
       token&.deep_symbolize_keys
     end
 
-    def serve_file(key, content_type:, disposition:)
+    def serve_file(key, content_type:, disposition:, service_name: nil)
       options = {
         type: content_type || DEFAULT_SEND_FILE_TYPE,
         disposition: disposition || DEFAULT_SEND_FILE_DISPOSITION
       }
-      send_data(db_service.download(key), options)
+      send_data(db_service_for(service_name).download(key), options)
     end
 
     def upload_file(token) # rubocop:disable Naming/PredicateMethod
       return false unless acceptable_content?(token)
 
-      db_service.upload(token[:key], request.body, checksum: token[:checksum])
+      service = db_service_for(token[:service_name])
+      service.upload(token[:key], request.body, checksum: token[:checksum])
       true
     end
   end
