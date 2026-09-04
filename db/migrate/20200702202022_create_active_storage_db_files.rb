@@ -13,7 +13,12 @@ class CreateActiveStorageDBFiles < ActiveRecord::Migration[6.0]
       end
 
       t.index [:ref], unique: true
+      t.index [:created_at]
     end
+
+    add_index :active_storage_db_files, [:ref, :created_at],
+              name: "index_active_storage_db_files_ref_created",
+              order: { created_at: :desc }
   end
 
   private
