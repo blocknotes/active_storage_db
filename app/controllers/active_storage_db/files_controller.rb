@@ -33,7 +33,8 @@ module ActiveStorageDB
     end
 
     def db_service
-      ActiveStorage::Blob.service
+      service_name = Rails.application.config.active_storage_db.service
+      service_name ? ActiveStorage::Blob.services.fetch(service_name) : ActiveStorage::Blob.service
     end
 
     def decode_verified_key
