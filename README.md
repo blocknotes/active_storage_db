@@ -31,6 +31,34 @@ db:
 
 ### Customizations
 
+#### Use DB storage for selected attachments
+
+When your application uses another service by default, configure the engine's
+service separately in `config/application.rb` or an environment configuration:
+
+```rb
+config.active_storage.service = :local # Keep your existing default service
+config.active_storage_db.service = :db
+```
+
+The `active_storage_db.service` value is the name of a DB service in
+`config/storage.yml` (a string or symbol), not the adapter name `DB`.
+Select that same service on attachments that should use database storage:
+
+```rb
+class Report < ApplicationRecord
+  has_one_attached :template, service: :db
+end
+```
+
+The engine uses the configured service for downloads and direct uploads without
+changing the application's default service. The setting defaults to `nil`, which
+preserves the existing behavior of using `ActiveStorage::Blob.service`.
+An unknown service name raises the Active Storage registry's configuration error.
+This setting selects one service for all engine requests.
+
+#### Separate database connection
+
 To setup a separate database connection for the `ActiveStorageDB` migrations and files data:
 
 1. Add a different database configuration per environment to `config/database.yml`, e.g:

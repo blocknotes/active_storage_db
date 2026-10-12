@@ -11,5 +11,8 @@ module ActiveStorageDB
 
   class Engine < ::Rails::Engine
     isolate_namespace ActiveStorageDB
+
+    config.active_storage_db = ActiveSupport::OrderedOptions.new
+    config.active_storage_db.service = nil
   end
 end
